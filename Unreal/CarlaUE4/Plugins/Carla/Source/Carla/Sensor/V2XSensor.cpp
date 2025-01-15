@@ -186,30 +186,7 @@ void AV2XSensor::PostPhysTick(UWorld *World, ELevelTick TickType, float DeltaTim
         // Step 2: Simulate the communication for the actors in actor list to current actor.
         if (!ActorPowerList.empty())
         {
-            UCarlaEpisode *carla_episode = UCarlaStatics::GetCurrentEpisode(GetWorld());
-            PathLossModelObj->Simulate(ActorPowerList, carla_episode, GetWorld());
-            // Step 3: Get the list of actors who can send message to current actor, and the receive power of their messages.
-            ActorPowerMap actor_receivepower_map = PathLossModelObj->GetReceiveActorPowerList();
-            // Step 4: Retrieve the messages of the actors that are received
 
-            // get registry to retrieve carla actor IDs
-            const FActorRegistry &Registry = carla_episode->GetActorRegistry();
-
-            AV2XSensor::V2XDataList msg_received_power_list;
-            for (const auto &pair : actor_receivepower_map)
-            {
-                // Note: AActor* sender_actor = pair.first;
-                carla::sensor::data::CAMData send_msg_and_pw = AV2XSensor::mActorV2XDataMap.at(pair.first);
-                carla::sensor::data::CAMData received_msg_and_pw;
-                // sent CAM
-                received_msg_and_pw.Message = send_msg_and_pw.Message;
-                // receive power
-                received_msg_and_pw.Power = pair.second;
-
-                msg_received_power_list.push_back(received_msg_and_pw);
-            }
-
-            WriteMessageToV2XData(msg_received_power_list);
         }
         // Step 5: Send message
 
