@@ -10,6 +10,7 @@
 #include "Components/SceneCaptureComponent2D.h"
 #include "Kismet/GameplayStatics.h"
 #include "ConstructorHelpers.h"
+#include "Carla/Game/CarlaStatics.h"
 
 AWeather::AWeather(const FObjectInitializer& ObjectInitializer)
     : Super(ObjectInitializer)
@@ -89,4 +90,35 @@ void AWeather::SetWeather(const FWeatherParameters& InWeather)
 void AWeather::SetDayNightCycle(const bool& active)
 {
     DayNightCycle = active;
+}
+
+void AWeather::AddWeatherToRecorder() const
+{
+  auto *Recorder = UCarlaStatics::GetRecorder(GetWorld());
+  if (Recorder && Recorder->IsEnabled())
+  {
+    Recorder->AddWeather(GetCurrentWeather());
+  }
+}
+
+AWeather *AWeather::FindWeatherInstance(UWorld *World)
+{
+  if(World)
+  {
+    // find the Weather actor in the world (TODO: spawn if necessary)
+    TArray<AActor*> FoundWeathers;
+    UGameplayStatics::GetAllActorsOfClass(World, AWeather::StaticClass(), FoundWeathers);
+    if (FoundWeathers.Num() > 0)
+    {
+      /// TODO: check for more than one weather(s)
+      return CastChecked<AWeather>(FoundWeathers[0]);
+    }
+    else
+    {
+      UE_LOG(LogCarla, Error, TEXT("No Weather actor found in world"));
+      return nullptr;
+    }
+  }
+  UE_LOG(LogCarla, Error, TEXT("UWorld unavailable for finding weather"));
+  return nullptr;
 }

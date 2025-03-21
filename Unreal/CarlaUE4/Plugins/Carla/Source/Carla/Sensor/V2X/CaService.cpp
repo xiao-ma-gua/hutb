@@ -10,6 +10,10 @@
 #include "carla/rpc/String.h"
 #include "Carla/Util/BoundingBoxCalculator.h"
 #include <chrono>
+
+// call static FVector FIMU_GetActorAngularVelocityInRadians(AActor& Actor)
+// #include "../InertialMeasurementUnit.cpp"
+
 static const float scLowFrequencyContainerInterval = 0.5;
 
 ITSContainer::SpeedValue_t CaService::BuildSpeedValue(const float vel)
@@ -616,6 +620,26 @@ float CaService::ComputeSpeed()
     // bias are determined by the client
     constexpr float Mean = 0.0f;
     return boost::algorithm::clamp(speed + mRandomEngine->GetNormalDistribution(Mean, VelocityDeviation), 0.0f, std::numeric_limits<float>::max());
+}
+
+// Returns the angular velocity of Actor, expressed in the frame of Actor (copy from InertialMeasurementUnit.cpp)
+static FVector FIMU_GetActorAngularVelocityInRadians(
+    AActor& Actor)
+{
+    const auto RootComponent = Cast<UPrimitiveComponent>(Actor.GetRootComponent());
+
+    FVector AngularVelocity;
+
+    if (RootComponent != nullptr) {
+        const FQuat ActorGlobalRotation = RootComponent->GetComponentTransform().GetRotation();
+        const FVector GlobalAngularVelocity = RootComponent->GetPhysicsAngularVelocityInRadians();
+        AngularVelocity = ActorGlobalRotation.UnrotateVector(GlobalAngularVelocity);
+    }
+    else {
+        AngularVelocity = FVector::ZeroVector;
+    }
+
+    return AngularVelocity;
 }
 
 float CaService::ComputeYawRate()

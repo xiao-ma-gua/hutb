@@ -49,6 +49,36 @@ void WriteFTransform(std::ofstream &OutFile, const FTransform &InObj)
   WriteFVector(OutFile, InObj.GetRotation().Euler());
 }
 
+// write binary data from FRotator
+void WriteFRotator(std::ofstream &OutFile, const FRotator &InObj)
+{
+  WriteValue<float>(OutFile, InObj.Pitch);
+  WriteValue<float>(OutFile, InObj.Roll);
+  WriteValue<float>(OutFile, InObj.Yaw);
+}
+
+// write binary data from FVector2D
+void WriteFVector2D(std::ofstream &OutFile, const FVector2D &InObj)
+{
+  WriteValue<float>(OutFile, InObj.X);
+  WriteValue<float>(OutFile, InObj.Y);
+}
+
+// write binary data to FLinearColor
+void WriteFLinearColor(std::ofstream &InFile, const FLinearColor &InObj)
+{
+  WriteValue<float>(InFile, InObj.A);
+  WriteValue<float>(InFile, InObj.B);
+  WriteValue<float>(InFile, InObj.G);
+  WriteValue<float>(InFile, InObj.R);
+}
+
+// write binary data from FTransform
+// void WriteFTransform(std::ofstream &OutFile, const FTransform &InObj){
+// WriteFVector(OutFile, InObj.GetTranslation());
+// WriteFVector(OutFile, InObj.GetRotation().Euler());
+// }
+
 // write binary data from FString (length + text)
 void WriteFString(std::ostream &OutFile, const FString &InObj)
 {
@@ -81,6 +111,39 @@ void ReadFTransform(std::ifstream &InFile, FTransform &OutObj)
   ReadFVector(InFile, Vec);
   OutObj.GetRotation().MakeFromEuler(Vec);
 }
+
+// read binary data to FRotator
+void ReadFRotator(std::ifstream &InFile, FRotator &OutObj)
+{
+  ReadValue<float>(InFile, OutObj.Pitch);
+  ReadValue<float>(InFile, OutObj.Roll);
+  ReadValue<float>(InFile, OutObj.Yaw);
+}
+
+// read binary data to FVector2D
+void ReadFVector2D(std::ifstream &InFile, FVector2D &OutObj)
+{
+  ReadValue<float>(InFile, OutObj.X);
+  ReadValue<float>(InFile, OutObj.Y);
+}
+
+// read binary data to FLinearColor
+void ReadFLinearColor(std::ifstream &InFile, FLinearColor &OutObj)
+{
+  ReadValue<float>(InFile, OutObj.A);
+  ReadValue<float>(InFile, OutObj.B);
+  ReadValue<float>(InFile, OutObj.G);
+  ReadValue<float>(InFile, OutObj.R);
+}
+
+// read binary data to FTransform
+// void ReadFTransform(std::ifstream &InFile, FTransform &OutObj){
+// FVector Vec;
+// ReadFVector(InFile, Vec);
+// OutObj.SetTranslation(Vec);
+// ReadFVector(InFile, Vec);
+// OutObj.GetRotation().MakeFromEuler(Vec);
+// }
 
 // read binary data to FString (length + text)
 void ReadFString(std::istream &InFile, FString &OutObj)

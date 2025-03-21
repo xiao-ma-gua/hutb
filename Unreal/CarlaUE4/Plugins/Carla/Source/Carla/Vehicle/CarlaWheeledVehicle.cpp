@@ -45,6 +45,12 @@ ACarlaWheeledVehicle::ACarlaWheeledVehicle(const FObjectInitializer& ObjectIniti
 
   GetVehicleMovementComponent()->bReverseAsBrake = false;
   BaseMovementComponent = CreateDefaultSubobject<UBaseCarlaMovementComponent>(TEXT("BaseMovementComponent"));
+
+  // Initialize audio components
+  ConstructSounds();
+
+  // Initialize collision sound upon collisions
+  ConstructCollisionHandler(); 
 }
 
 ACarlaWheeledVehicle::~ACarlaWheeledVehicle() {}
@@ -200,6 +206,46 @@ void ACarlaWheeledVehicle::BeginPlay()
   }
 
   AddReferenceToManager();
+
+  UWheeledVehicleMovementComponent4W *Vehicle4W = Cast<UWheeledVehicleMovementComponent4W>(
+      GetVehicleMovementComponent());
+  check(Vehicle4W != nullptr);
+
+  // Setup Tire Configs with default value. This is needed to avoid getting
+  // friction values of previously created TireConfigs for the same vehicle
+  // blueprint.
+  TArray<float> OriginalFrictions;
+  OriginalFrictions.Init(FrictionScale, Vehicle4W->Wheels.Num());
+  SetWheelsFrictionScale(OriginalFrictions);
+
+  // Check if it overlaps with a Friction trigger, if so, update the friction
+  // scale.
+  TArray<AActor *> OverlapActors;
+  GetOverlappingActors(OverlapActors, AFrictionTrigger::StaticClass());
+  for (const auto &Actor : OverlapActors)
+  {
+    AFrictionTrigger *FrictionTrigger = Cast<AFrictionTrigger>(Actor);
+    if (FrictionTrigger)
+    {
+      FrictionScale = FrictionTrigger->Friction;
+    }
+  }
+
+  // Set the friction scale to Wheel CDO and update wheel setups
+  TArray<FWheelSetup> NewWheelSetups = Vehicle4W->WheelSetups;
+
+  for (const auto &WheelSetup : NewWheelSetups)
+  {
+    UVehicleWheel *Wheel = WheelSetup.WheelClass.GetDefaultObject();
+    check(Wheel != nullptr);
+  }
+
+  Vehicle4W->WheelSetups = NewWheelSetups;
+
+  LastPhysicsControl = GetVehiclePhysicsControl();
+
+  // Turn off all audio until vehicle starts running
+  SetVolume(0);
 }
 
 void ACarlaWheeledVehicle::TickActor(float DeltaTime, enum ELevelTick TickType, FActorTickFunction& ThisTickFunction){
@@ -267,6 +313,130 @@ FBoxSphereBounds ACarlaWheeledVehicle::GetBoxSphereBounds() const
   }
   return VehicleBounds->CalcBounds(GetActorTransform());
 }
+
+void ACarlaWheeledVehicle::Tick(float DeltaSeconds)
+{
+  Super::Tick(DeltaSeconds);
+
+  // Play sound that requires constant ticking
+  TickSounds(DeltaSeconds);
+}
+
+// =============================================================================
+// -- Sound Functions ----------------------------------------------------------
+// =============================================================================
+
+float ACarlaWheeledVehicle::Volume = 1.f; // static for all non-ego vehicles (use DReyeVRLevel::SetVolume)
+
+void ACarlaWheeledVehicle::ConstructSounds()
+{
+  // add all sounds here
+
+  static ConstructorHelpers::FObjectFinder<USoundCue> EngineCueObj(
+    TEXT("SoundCue'/Game/DReyeVR/Sounds/EngineRev/EngineRev.EngineRev'"));
+  EngineRevSound = CreateDefaultSubobject<UAudioComponent>(FName("EngineRevSound"));
+  EngineRevSound->SetupAttachment(GetRootComponent());       // attach to self
+  EngineRevSound->bAutoActivate = true;                      // start playing on begin
+  EngineRevSound->SetSound(EngineCueObj.Object);             // using this sound
+  EngineRevSound->SetRelativeLocation(EngineLocnInVehicle);  // location of "engine" in vehicle (3D sound)
+  EngineRevSound->SetFloatParameter(FName("RPM"), 0.f);      // initially idle
+  EngineRevSound->bAutoDestroy = false;                      // No automatic destroy, persist along with vehicle
+  check(EngineRevSound != nullptr);
+
+  static ConstructorHelpers::FObjectFinder<USoundCue> CarCrashCue(
+    TEXT("SoundCue'/Game/DReyeVR/Sounds/Crash/CrashCue.CrashCue'"));
+  CrashSound = CreateDefaultSubobject<UAudioComponent>(TEXT("CarCrash"));
+  CrashSound->SetupAttachment(GetRootComponent());
+  CrashSound->bAutoActivate = false;
+  CrashSound->SetSound(CarCrashCue.Object);
+  CrashSound->bAutoDestroy = false;
+  check(CrashSound != nullptr);
+}
+
+void ACarlaWheeledVehicle::TickSounds(float DeltaSeconds)
+{
+  // Respect the global vehicle volume param
+  SetVolume(ACarlaWheeledVehicle::Volume);
+  
+  if (EngineRevSound)
+  {
+    if (!EngineRevSound->IsPlaying()) 
+    {
+      EngineRevSound->Play(); // turn on the engine sound if not already on 
+    }
+    float RPM = FMath::Clamp(GetVehicleMovementComponent()->GetEngineRotationSpeed(), 0.f, 5650.0f);
+    EngineRevSound->SetFloatParameter(FName("RPM"), RPM);
+  }
+  // add other sounds that need tick-level granularity here...
+}
+
+void ACarlaWheeledVehicle::SetVolume(const float VolumeIn)
+{
+  if (EngineRevSound)
+    EngineRevSound->SetVolumeMultiplier(VolumeIn);
+  if (CrashSound)
+    CrashSound->SetVolumeMultiplier(VolumeIn);
+}
+
+// =============================================================================
+// -- Collision Functions ------------------------------------------------------
+// =============================================================================
+
+void ACarlaWheeledVehicle::ConstructCollisionHandler()
+{
+  // using Carla's GetVehicleBoundingBox function
+  UBoxComponent *Bounds = this->GetVehicleBoundingBox();
+  Bounds->SetGenerateOverlapEvents(true);
+  Bounds->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+  Bounds->SetCollisionProfileName(TEXT("Trigger"));
+  Bounds->OnComponentBeginOverlap.AddDynamic(this, &ACarlaWheeledVehicle::OnOverlapBegin);
+}
+
+bool ACarlaWheeledVehicle::EnableCollisionForActor(AActor *OtherActor)
+{
+  // define whether or not we should "collide" with these actors
+  // as opposed to actors such as the ground/grass
+  const FString OtherName = OtherActor->GetName().ToLower();
+  double Now = GetWorld()->GetTimeSeconds();
+  bool bIsAVehicle = OtherActor->IsA(ACarlaWheeledVehicle::StaticClass());
+  return (CollisionCooldownTime < Now &&        // respect collision audio cooldown
+          (bIsAVehicle ||                       // do collide with vehicles
+            OtherName.Contains("spline") ||      // do collide with carla "spline" (misc) objects
+            OtherName.Contains("streetlight") || // do collide with street lights
+            OtherName.Contains("curb")           // do collide with curb objects
+          ));
+}
+
+void ACarlaWheeledVehicle::OnOverlapBegin(UPrimitiveComponent *OverlappedComp, AActor *OtherActor,
+                                          UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+                                          const FHitResult &SweepResult)
+{
+  if (OtherActor == nullptr || OtherActor == this)
+    return;
+  
+  // can be more flexible, such as having collisions with static props or people too
+  if (EnableCollisionForActor(OtherActor))
+  {
+    // emit the car collision sound at the midpoint between the vehicles' collision
+    /// TODO: would be ideal to use FHitPoint::ImpactPoint but there is a bug in UE4 where this is not initialized
+    // see: https://answers.unrealengine.com/questions/219744/component-overlap-hit-position-always-returns-000.html
+    FVector SoundEmitLocation = EngineLocnInVehicle;
+    bool bIsAVehicle = OtherActor->IsA(ACarlaWheeledVehicle::StaticClass());
+    if (bIsAVehicle) { // in the case where the other actor is a vehicle, do emit the sound at the location midpoint
+      SoundEmitLocation = (OtherActor->GetActorLocation() - this->GetActorLocation()) / 2.f;
+      SoundEmitLocation += 75.f * FVector::UpVector; // Make the sound emitted not at the ground (0.75m above ground)
+    }
+    if (CrashSound != nullptr) {
+      CrashSound->SetRelativeLocation(SoundEmitLocation);
+      CrashSound->Play();
+      CollisionCooldownTime = GetWorld()->GetTimeSeconds() + 0.5f; // have at least 0.5s of buffer between collision audio
+    }
+  }
+}
+
+// =============================================================================
+// -- CARLA --------------------------------------------------------------------
+// =============================================================================
 
 void ACarlaWheeledVehicle::AdjustVehicleBounds()
 {

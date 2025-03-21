@@ -31,6 +31,7 @@
 #include "carla/sensor/s11n/GBufferUint8Serializer.h"
 #include "carla/sensor/s11n/GBufferFloatSerializer.h"
 #include "carla/sensor/s11n/V2XSerializer.h"
+#include "carla/sensor/s11n/DReyeVRSerializer.h" // DReyeVR serializer header
 
 // 2. Add a forward-declaration of the sensor here.
 class ACollisionSensor;
@@ -50,6 +51,7 @@ class ASemanticSegmentationCamera;
 class AInstanceSegmentationCamera;
 class ARssSensor;
 class FWorldObserver;
+class ADReyeVRSensor; // DReyeVR forward declaration
 class AFisheyeSensor;
 struct FCameraGBufferUint8;
 struct FCameraGBufferFloat;
@@ -84,6 +86,7 @@ namespace sensor {
     std::pair<ASemanticSegmentationCamera *, s11n::ImageSerializer>,
     std::pair<AInstanceSegmentationCamera *, s11n::ImageSerializer>,
     std::pair<FWorldObserver *, s11n::EpisodeStateSerializer>,
+    std::pair<ADReyeVRSensor *, s11n::DReyeVRSerializer>,
     std::pair<AFisheyeSensor *, s11n::ImageSerializerCube>,
     std::pair<FCameraGBufferUint8 *, s11n::GBufferUint8Serializer>,
     std::pair<FCameraGBufferFloat *, s11n::GBufferFloatSerializer>,
@@ -118,6 +121,7 @@ namespace sensor {
 #include "Carla/Sensor/SemanticSegmentationCamera.h"
 #include "Carla/Sensor/InstanceSegmentationCamera.h"
 #include "Carla/Sensor/WorldObserver.h"
+#include "Carla/Sensor/DReyeVRSensor.h" // DReyeVRSensor header file
 #include "Carla/Sensor/FisheyeSensor.h"
 #include "Carla/Sensor/V2XSensor.h"
 #include "Carla/Sensor/CustomV2XSensor.h"

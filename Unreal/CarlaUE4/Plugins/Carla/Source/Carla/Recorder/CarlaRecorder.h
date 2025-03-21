@@ -31,11 +31,16 @@
 #include "CarlaRecorderPosition.h"
 #include "CarlaRecorderQuery.h"
 #include "CarlaRecorderState.h"
+#include "CarlaRecorderWeather.h"
 #include "CarlaRecorderVisualTime.h"
 #include "CarlaRecorderWalkerBones.h"
 #include "CarlaRecorderDoorVehicle.h"
 #include "CarlaReplayer.h"
 #include "Carla/Vehicle/CarlaWheeledVehicle.h"
+
+// DReyeVR includes
+#include "DReyeVRRecorder.h"
+#include "Carla/Sensor/DReyeVRData.h"
 
 #include "CarlaRecorder.generated.h"
 
@@ -45,6 +50,10 @@ class ACarlaWheeledVehicle;
 class UCarlaLight;
 class ATrafficSignBase;
 class ATrafficLightBase;
+
+#define DREYEVR_PACKET_ID 139
+#define DREYEVR_CUSTOM_ACTOR_PACKET_ID 140
+#define DREYEVR_CONFIG_FILE_PACKET_ID 141
 
 enum class CarlaRecorderPacketId : uint8_t
 {
@@ -71,7 +80,12 @@ enum class CarlaRecorderPacketId : uint8_t
   VisualTime,
   VehicleDoor,
   AnimVehicleWheels,
-  AnimBiker
+  AnimBiker,
+  Weather,
+  // "We suggest to use id over 100 for user custom packets, because this list will keep growing in the future"
+  DReyeVR = DREYEVR_PACKET_ID,                         // our custom DReyeVR packet (for raw sensor data)
+  DReyeVRCustomActor = DREYEVR_CUSTOM_ACTOR_PACKET_ID, // custom DReyeVR actors (not raw sensor data)
+  DReyeVRConfigFile = DREYEVR_CONFIG_FILE_PACKET_ID    // DReyeVR configuration files (parameters)
 };
 
 /// Recorder for the simulation
@@ -143,6 +157,8 @@ public:
   void AddVehicleDoor(const ACarlaWheeledVehicle& Vehicle, const EVehicleDoor SDoors, bool bIsOpen);
 
   void AddDoorVehicle(const CarlaRecorderDoorVehicle &DoorVehicle);
+
+  void AddWeather(const FWeatherParameters& WeatherParams);
 
   // set episode
   void SetEpisode(UCarlaEpisode *ThisEpisode)
@@ -216,6 +232,10 @@ private:
   CarlaRecorderWalkersBones WalkersBones;
   CarlaRecorderVisualTime VisualTime;
   CarlaRecorderDoorVehicles DoorVehicles;
+  CarlaRecorderWeathers Weathers;
+  DReyeVRDataRecorders<DReyeVR::AggregateData, DREYEVR_PACKET_ID> DReyeVRAggData;
+  DReyeVRDataRecorders<DReyeVR::CustomActorData, DREYEVR_CUSTOM_ACTOR_PACKET_ID> DReyeVRCustomActorData;
+  DReyeVRDataRecorders<DReyeVR::ConfigFileData, DREYEVR_CONFIG_FILE_PACKET_ID> DReyeVRConfigFileData;
 
   // replayer
   CarlaReplayer Replayer;
@@ -224,6 +244,7 @@ private:
   CarlaRecorderQuery Query;
 
   void AddExistingActors(void);
+  void AddStartingWeather(void);
   void AddActorPosition(FCarlaActor *CarlaActor);
   void AddWalkerAnimation(FCarlaActor *CarlaActor);
   void AddBikerAnimation(FCarlaActor *CarlaActor);
@@ -233,4 +254,5 @@ private:
   void AddVehicleLight(FCarlaActor *CarlaActor);
   void AddActorKinematics(FCarlaActor *CarlaActor);
   void AddActorBoundingBox(FCarlaActor *CarlaActor);
+  void AddDReyeVRData();
 };

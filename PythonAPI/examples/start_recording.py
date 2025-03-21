@@ -108,11 +108,17 @@ def main():
             logging.warning(msg, count, number_of_spawn_points)
             count = number_of_spawn_points
 
+        # @todo cannot import these directly.
+        SpawnActor = carla.command.SpawnActor
+        SetAutopilot = carla.command.SetAutopilot
+        FutureActor = carla.command.FutureActor
+
         batch = []
         for n, transform in enumerate(spawn_points):
             if n >= count:
                 break
             blueprint = random.choice(blueprints)
+            assert blueprint is not None
             if blueprint.has_attribute('color'):
                 color = random.choice(blueprint.get_attribute('color').recommended_values)
                 blueprint.set_attribute('color', color)

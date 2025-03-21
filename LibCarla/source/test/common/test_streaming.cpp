@@ -74,6 +74,7 @@ TEST(streaming, low_level_sending_strings) {
     std::this_thread::sleep_for(2ms);
     carla::SharedBufferView View = BufView;
     stream.Write(View);
+    stream << message_text;
   }
 
   std::this_thread::sleep_for(2ms);
@@ -114,6 +115,7 @@ TEST(streaming, low_level_unsubscribing) {
       std::this_thread::sleep_for(4ms);
       carla::SharedBufferView View = BufView;
       stream.Write(View);
+      stream << message_text;
     }
 
     std::this_thread::sleep_for(4ms);
@@ -123,6 +125,7 @@ TEST(streaming, low_level_unsubscribing) {
       std::this_thread::sleep_for(2ms);
       carla::SharedBufferView View = BufView;
       stream.Write(View);
+      stream << message_text;
     }
 
     ASSERT_GE(message_count, number_of_messages - 3u);
@@ -151,6 +154,7 @@ TEST(streaming, low_level_tcp_small_message) {
     carla::Buffer Buf(boost::asio::buffer(msg.c_str(), msg.size()));
     carla::SharedBufferView BufView = carla::BufferView::CreateFrom(std::move(Buf));
     while (!done) {
+      session->Write(carla::Buffer(msg));
       std::this_thread::sleep_for(1ns);
       carla::SharedBufferView View = BufView;
       session->Write(View);
@@ -208,6 +212,7 @@ TEST(streaming, stream_outlives_server) {
       if (s != nullptr) {
         carla::SharedBufferView View = BufView;
         s->Write(View);
+        (*s) << message;
       }
     }
   });
@@ -269,6 +274,7 @@ TEST(streaming, multi_stream) {
       std::this_thread::sleep_for(6ms);
       carla::SharedBufferView View = BufView;
       stream.Write(View);
+      stream << message;
     }
     std::this_thread::sleep_for(6ms);
 

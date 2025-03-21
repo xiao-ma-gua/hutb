@@ -9,6 +9,7 @@
 #include "Carla/Sensor/InertialMeasurementUnit.h"
 #include "Carla/Actor/ActorBlueprintFunctionLibrary.h"
 #include "Carla/Sensor/WorldObserver.h"
+#include "Carla/Game/CarlaStatics.h"
 #include "Carla/Vehicle/CarlaWheeledVehicle.h"
 
 #include <compiler/disable-ue4-macros.h>

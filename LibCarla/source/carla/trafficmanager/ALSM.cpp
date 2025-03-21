@@ -287,7 +287,7 @@ void ALSM::UpdateUnregisteredActorsData() {
     std::vector<SimpleWaypointPtr> nearest_waypoints;
 
     bool state_entry_not_present = !simulation_state.ContainsActor(actor_id);
-    if (type_id.front() == 'v') {
+    if (type_id.front() == 'v' || type_id.rfind("harplab.dreyevr_vehicle.") == 0) { // include DReyeVR vehicle
       auto vehicle_ptr = boost::static_pointer_cast<cc::Vehicle>(actor_ptr);
       kinematic_state.speed_limit = vehicle_ptr->GetSpeedLimit();
 

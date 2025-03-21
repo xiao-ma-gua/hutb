@@ -96,6 +96,15 @@ public:
   UFUNCTION(BlueprintCallable, Category = "Carla Game Mode")
   void OnUnloadStreamLevel();
 
+  /// The class of Weather to spawn.
+  UPROPERTY(Category = "CARLA Game Mode", EditAnywhere)
+      TSubclassOf<AWeather> WeatherClass;
+
+  /// List of actor spawners that will be used to define and spawn the actors
+  /// available in game.
+  UPROPERTY(Category = "CARLA Game Mode", EditAnywhere)
+      TSet<TSubclassOf<ACarlaActorFactory>> ActorFactories;
+
   ALargeMapManager* GetLMManager() const {
     return LMManager;
   }
@@ -161,15 +170,6 @@ private:
 
   UPROPERTY()
   UObjectRegister* ObjectRegister = nullptr;
-
-  /// The class of Weather to spawn.
-  UPROPERTY(Category = "CARLA Game Mode", EditAnywhere)
-  TSubclassOf<AWeather> WeatherClass;
-
-  /// List of actor spawners that will be used to define and spawn the actors
-  /// available in game.
-  UPROPERTY(Category = "CARLA Game Mode", EditAnywhere)
-  TSet<TSubclassOf<ACarlaActorFactory>> ActorFactories;
 
   UPROPERTY()
   TArray<FTransform> SpawnPointsTransforms;
