@@ -96,15 +96,6 @@ public:
   UFUNCTION(BlueprintCallable, Category = "Carla Game Mode")
   void OnUnloadStreamLevel();
 
-  /// The class of Weather to spawn.
-  UPROPERTY(Category = "CARLA Game Mode", EditAnywhere)
-      TSubclassOf<AWeather> WeatherClass;
-
-  /// List of actor spawners that will be used to define and spawn the actors
-  /// available in game.
-  UPROPERTY(Category = "CARLA Game Mode", EditAnywhere)
-      TSet<TSubclassOf<ACarlaActorFactory>> ActorFactories;
-
   ALargeMapManager* GetLMManager() const {
     return LMManager;
   }
@@ -124,6 +115,15 @@ public:
   // Gravitational acceleration. Default is earth one, which is approximately 9.81 m/s^2
   UPROPERTY(BlueprintReadOnly, EditAnywhere, Category="Sensor Gravity")
   float IMUISensorGravity = 9.81f;
+
+  /// List of actor spawners that will be used to define and spawn the actors
+  /// available in game.
+  UPROPERTY(Category = "CARLA Game Mode", EditAnywhere)
+  TSet<TSubclassOf<ACarlaActorFactory>> ActorFactories;
+
+  /// The class of Weather to spawn.
+  UPROPERTY(Category = "CARLA Game Mode", EditAnywhere)
+  TSubclassOf<AWeather> WeatherClass;
 
 protected:
 

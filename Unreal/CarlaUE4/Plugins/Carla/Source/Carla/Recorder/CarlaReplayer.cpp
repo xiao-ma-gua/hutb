@@ -218,6 +218,12 @@ std::string CarlaReplayer::ReplayFile(std::string Filename, double TimeStart, do
   Info << "Replaying from " << TimeStart << " s - " << TimeToStop << " s (" << TotalTime << " s) at " <<
       std::setprecision(1) << std::fixed << TimeFactor << "x" << std::endl;
 
+  if (IgnoreHero)
+      Info << "Ignoring Hero vehicle" << std::endl;
+
+  if (IgnoreSpectator)
+      Info << "Ignoring Spectator camera" << std::endl;
+
   // set the follow Id
   FollowId = ThisFollowId;
 

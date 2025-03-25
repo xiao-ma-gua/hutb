@@ -581,6 +581,7 @@ void ACarlaRecorder::Write(double DeltaSeconds)
     PlatformTime.Write(File);
     PhysicsControls.Write(File);
     TrafficLightTimes.Write(File);
+    WalkersBones.Write(File);
   }
   // custom DReyeVR data
   DReyeVRAggData.Write(File);

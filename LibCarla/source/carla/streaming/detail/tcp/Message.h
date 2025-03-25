@@ -42,11 +42,12 @@ namespace tcp {
 
   private:
 
-    MessageTmpl(size_t) {}
+    template <typename... Buffers>
+    MessageTmpl(size_t size, Buffers... buffers) {}
 
     template <typename... Buffers>
     MessageTmpl(size_t size, SharedBufferView buffer, Buffers... buffers)
-      : MessageTmpl(size) {
+      : MessageTmpl(size, buffers...) {
       ++_number_of_buffers;
       _total_size += buffer->size();
       _buffer_views[1u + size - _number_of_buffers] = buffer->cbuffer();
