@@ -207,43 +207,6 @@ void ACarlaWheeledVehicle::BeginPlay()
 
   AddReferenceToManager();
 
-  UWheeledVehicleMovementComponent4W *Vehicle4W = Cast<UWheeledVehicleMovementComponent4W>(
-      GetVehicleMovementComponent());
-  check(Vehicle4W != nullptr);
-
-  // Setup Tire Configs with default value. This is needed to avoid getting
-  // friction values of previously created TireConfigs for the same vehicle
-  // blueprint.
-  TArray<float> OriginalFrictions;
-  OriginalFrictions.Init(FrictionScale, Vehicle4W->Wheels.Num());
-  SetWheelsFrictionScale(OriginalFrictions);
-
-  // Check if it overlaps with a Friction trigger, if so, update the friction
-  // scale.
-  TArray<AActor *> OverlapActors;
-  GetOverlappingActors(OverlapActors, AFrictionTrigger::StaticClass());
-  for (const auto &Actor : OverlapActors)
-  {
-    AFrictionTrigger *FrictionTrigger = Cast<AFrictionTrigger>(Actor);
-    if (FrictionTrigger)
-    {
-      FrictionScale = FrictionTrigger->Friction;
-    }
-  }
-
-  // Set the friction scale to Wheel CDO and update wheel setups
-  TArray<FWheelSetup> NewWheelSetups = Vehicle4W->WheelSetups;
-
-  for (const auto &WheelSetup : NewWheelSetups)
-  {
-    UVehicleWheel *Wheel = WheelSetup.WheelClass.GetDefaultObject();
-    check(Wheel != nullptr);
-  }
-
-  Vehicle4W->WheelSetups = NewWheelSetups;
-
-  LastPhysicsControl = GetVehiclePhysicsControl();
-
   // Turn off all audio until vehicle starts running
   SetVolume(0);
 }
