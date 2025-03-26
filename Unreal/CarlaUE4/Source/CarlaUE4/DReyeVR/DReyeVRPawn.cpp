@@ -96,8 +96,11 @@ void ADReyeVRPawn::BeginEgoVehicle(AEgoVehicle *Vehicle, UWorld *World)
     EgoVehicle->SetPawn(this);
 
     // register inputs that require EgoVehicle
-    ensure(InputComponent != nullptr);
-    SetupEgoVehicleInputComponent(InputComponent, EgoVehicle);
+    // ensure(InputComponent != nullptr);
+    if (IsValid(InputComponent))
+    {
+        SetupEgoVehicleInputComponent(InputComponent, EgoVehicle);
+    }
 }
 
 void ADReyeVRPawn::BeginDestroy()
