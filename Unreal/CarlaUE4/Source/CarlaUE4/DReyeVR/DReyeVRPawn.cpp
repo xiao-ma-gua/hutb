@@ -95,6 +95,12 @@ void ADReyeVRPawn::BeginEgoVehicle(AEgoVehicle *Vehicle, UWorld *World)
     ensure(EgoVehicle != nullptr);
     EgoVehicle->SetPawn(this);
 
+    // InputComponent became not NULL
+    if (GetPlayer() == nullptr)
+        return;
+    InputComponent = NewObject<UInputComponent>(this);
+    InputComponent->RegisterComponent();
+
     // register inputs that require EgoVehicle
     // ensure(InputComponent != nullptr);
     if (IsValid(InputComponent))
