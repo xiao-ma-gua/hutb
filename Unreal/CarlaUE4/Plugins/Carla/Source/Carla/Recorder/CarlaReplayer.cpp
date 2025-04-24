@@ -7,6 +7,7 @@
 #include "CarlaReplayer.h"
 #include "CarlaRecorder.h"
 #include "Carla/Game/CarlaEpisode.h"
+#include "Carla/Actor/ActorAttribute.h"
 
 // DReyeVR include
 #include "Carla/Actor/DReyeVRCustomActor.h" // ADReyeVRCustomActor::ActiveCustomActors
@@ -603,6 +604,15 @@ void CarlaReplayer::ProcessEventsAdd(void)
   for (i = 0; i < Total; ++i)
   {
     EventAdd.Read(File);
+
+    if (RecInfo.Version <= 1)
+    {
+        for (auto& Attribute : EventAdd.Description.Attributes)
+        {
+            // Index of ActorAttributeType was changed after 0.9.15
+            Attribute.Type += static_cast<uint8_t>(EActorAttributeType::Bool) - static_cast<uint8_t>(EActorAttributeType::Null);
+        }
+    }
 
     // auto Result = CallbackEventAdd(
     auto Result = Helper.ProcessReplayerEventAdd(
