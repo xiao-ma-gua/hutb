@@ -164,8 +164,8 @@ with open("README.md") as f:
     long_description = f.read()
 
 setup(
-    name='carla',
-    version='0.9.15',
+    name='hutb',
+    version='1.0.0',
     package_dir={'': 'source'},
     packages=['carla'],
     ext_modules=get_libcarla_extensions(),
@@ -173,7 +173,7 @@ setup(
     description='Python API for communicating with the CARLA server.',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/carla-simulator/carla',
-    author='The CARLA team',
-    author_email='carla.simulator@gmail.com',
+    url='https://github.com/OpenHUTB/carla',
+    author='The OpenHUTB team',
+    author_email='2929@hutb.edu.cn',
     include_package_data=True)
