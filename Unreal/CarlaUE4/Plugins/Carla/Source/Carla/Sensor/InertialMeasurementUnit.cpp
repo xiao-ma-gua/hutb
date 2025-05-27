@@ -53,7 +53,7 @@ void AInertialMeasurementUnit::SetOwner(AActor *Owner)
 }
 
 // Returns the angular velocity of Actor, expressed in the frame of Actor
-static FVector FIMU_GetActorAngularVelocityInRadians(
+FVector AInertialMeasurementUnit::GetActorAngularVelocityInRadians(
     AActor &Actor)
 {
   const auto RootComponent = Cast<UPrimitiveComponent>(Actor.GetRootComponent());
@@ -149,7 +149,7 @@ carla::geom::Vector3D AInertialMeasurementUnit::ComputeGyroscope()
 {
   check(GetOwner() != nullptr);
   const FVector AngularVelocity =
-      FIMU_GetActorAngularVelocityInRadians(*GetOwner());
+      GetActorAngularVelocityInRadians(*GetOwner());
 
   const FQuat SensorLocalRotation =
       RootComponent->GetRelativeTransform().GetRotation();

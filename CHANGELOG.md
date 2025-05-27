@@ -32,6 +32,7 @@
  * Fixed invalid comparission in python examples/rss
  * Updated inverted traffic PythonAPI example script, added support for waypoint-guided Inverted AI cars.
  * Fixed invisible spline meshes in instance segmentation
+ * Support of masked materials in instance segmentation, resulting in fine-grained annotations on e.g. leaves or fences (as in semantic segmentation)
 
 ## CARLA 0.9.15
 
