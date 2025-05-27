@@ -15,9 +15,9 @@ vehicle = world.try_spawn_actor(vehicle_bp, random.choice(spawn_points))
 
 physics_control = vehicle.get_physics_control()
 
-# 关闭物理，获取物理控制，服务器崩溃：
-# vehicle.set_simulate_physics(False)
-# physics_control = vehicle.get_physics_control()
+# 如果关闭物理，则不应该获取物理控制（摩擦系数、轮子位置），否则服务器会崩溃（已修复）
+vehicle.set_simulate_physics(False)
+physics_control = vehicle.get_physics_control()
 
 # 预期行为
 # 无论车辆的物理是否处于活动状态，物理控制都应该可访问，并且不应导致服务器崩溃。
