@@ -13,7 +13,11 @@ rem ============================================================================
 rem -- Get the last version to download ----------------------------------------
 rem ============================================================================
 
-if not exist "%CONTENT_FOLDER%" mkdir "%CONTENT_FOLDER%"
+if not exist "%CONTENT_FOLDER%" (
+    mkdir "%CONTENT_FOLDER%"
+) else (
+    goto skip_exit
+)
 
 for /F "delims=" %%a in (%CONTENT_VERSIONS%) do (
    set "lastLine=%%a"
@@ -59,6 +63,11 @@ goto success
 :success
     echo.
     echo %FILE_N% Content has been successfully installed in "%CONTENT_FOLDER%"!
+    goto good_exit
+
+:skip_exit
+    echo.
+    echo %FILE_N% Content has existed in "%CONTENT_FOLDER%"!
     goto good_exit
 
 :error_download
