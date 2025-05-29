@@ -14,50 +14,50 @@ pipeline {
             }
             stages
             {
-//                stage('windows setup')
-//                {
-                    steps
-                    {
-                        bat """
-                            call setEnv64.bat
-                            git update-index --skip-worktree Unreal/CarlaUE4/CarlaUE4.uproject
-                        """
-                        bat """
-                            call setEnv64.bat
-                            make setup ARGS="--chrono"
-                        """
-                    }
-//                }
-//                stage('windows build')
-//                {
-                    steps
-                    {
-                        bat """
-                            call setEnv64.bat
-                            make LibCarla
-                        """
-                        bat """
-                            call setEnv64.bat
-                            make PythonAPI
-                        """
-                        bat """
-                            call setEnv64.bat
-                            make CarlaUE4Editor ARGS="--chrono"
-                        """
-                        bat """
-                            call setEnv64.bat
-                            make plugins
-                        """
-                    }
-                    post
-                    {
+//               stage('windows setup')
+//               {
+//                   steps
+//                   {
+//                       bat """
+//                           call setEnv64.bat
+//                           git update-index --skip-worktree Unreal/CarlaUE4/CarlaUE4.uproject
+//                       """
+//                       bat """
+//                           call setEnv64.bat
+//                           make setup ARGS="--chrono"
+//                       """
+//                   }
+//               }
+//               stage('windows build')
+//               {
+//                   steps
+//                   {
+//                       bat """
+//                           call setEnv64.bat
+//                           make LibCarla
+//                       """
+//                       bat """
+//                           call setEnv64.bat
+//                           make PythonAPI
+//                       """
+//                       bat """
+//                           call setEnv64.bat
+//                           make CarlaUE4Editor ARGS="--chrono"
+//                       """
+//                       bat """
+//                           call setEnv64.bat
+//                           make plugins
+//                       """
+//                   }
+//                   post
+//                   {
                         always
                         {
                             archiveArtifacts 'PythonAPI/carla/dist/*.egg'
                             archiveArtifacts 'PythonAPI/carla/dist/*.whl'
                         }
-                    }
-//                }
+//                   }
+//               }
                 stage('windows retrieve content')
                 {
                     steps
