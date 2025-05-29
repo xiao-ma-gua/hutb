@@ -1,20 +1,65 @@
 pipeline {
-    agent any
-    stages {
-        stage('拉取代码') {
-            steps {
-                	echo '拉取代码'
+    agent none
+
+    stages
+    {
+        stage('windows')
+        {
+            // 调用时候需要知道本地节点的名字，否则会报错：‘Jenkins’ doesn’t have label ‘windows’
+            // 在 Dashboard -> Manager Jenkins -> Nodes(http://172.21.108.56:8080/manage/computer/) 中进行配置
+            agent any // { label "windows" }
+            environment
+            {
+                UE4_ROOT = 'C:\\workspace\\UnrealEngine'
+            }
+            stages
+            {
+                stage('windows setup')
+                {
+                    steps
+                    {
+                        bat """
+                            call setEnv64.bat
+                            git update-index --skip-worktree Unreal/CarlaUE4/CarlaUE4.uproject
+                        """
+                        bat """
+                            call setEnv64.bat
+                            make setup ARGS="--chrono"
+                        """
+                    }
+                }
+                stage('windows build')
+                {
+                    steps
+                    {
+                        bat """
+                            call setEnv64.bat
+                            make LibCarla
+                        """
+                        bat """
+                            call setEnv64.bat
+                            make PythonAPI
+                        """
+                        bat """
+                            call setEnv64.bat
+                            make CarlaUE4Editor ARGS="--chrono"
+                        """
+                        bat """
+                            call setEnv64.bat
+                            make plugins
+                        """
+                    }
+                    post
+                    {
+                        always
+                        {
+                            archiveArtifacts 'PythonAPI/carla/dist/*.egg'
+                            archiveArtifacts 'PythonAPI/carla/dist/*.whl'
+                        }
+                    }
                 }
             }
-            stage('编译构建') {
-                steps {
-                	echo '编译构建'
-                }
-            }
-            stage('项目部署') {
-                steps {
-                	echo '项目部署'
-                }
         }
     }
+    
 }

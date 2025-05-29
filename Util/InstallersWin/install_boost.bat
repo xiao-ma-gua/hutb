@@ -89,7 +89,7 @@ set _checksum=""
 
 if not exist "%BOOST_SRC_DIR%" (
     if not exist "%BOOST_TEMP_FILE_DIR%" (
-        echo %FILE_N% Retrieving boost.
+        echo %FILE_N% Retrieving boost from %BOOST_REPO% ...
         powershell -Command "(New-Object System.Net.WebClient).DownloadFile('%BOOST_REPO%', '%BOOST_TEMP_FILE_DIR%')"
         call :CheckSumEvaluate %BOOST_TEMP_FILE_DIR%,%BOOST_SHA256SUM%,_checksum
     )

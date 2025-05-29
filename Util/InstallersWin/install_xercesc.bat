@@ -75,7 +75,7 @@ if exist "%XERCESC_INSTALL_DIR%" (
 
 if not exist "%XERCESC_SRC_DIR%" (
     if not exist "%XERCESC_TEMP_FILE_DIR%" (
-        echo %FILE_N% Retrieving %XERCESC_BASENAME%.
+        echo %FILE_N% Retrieving %XERCESC_BASENAME% from %XERCESC_REPO% to %XERCESC_TEMP_FILE_DIR%.
         powershell -Command "(New-Object System.Net.WebClient).DownloadFile('%XERCESC_REPO%', '%XERCESC_TEMP_FILE_DIR%')"
     )
     if not exist "%XERCESC_TEMP_FILE_DIR%" (

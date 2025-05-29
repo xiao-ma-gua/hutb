@@ -5,12 +5,12 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 #include "Carla.h"
+#include "Carla/Game/CarlaEpisode.h"
 #include "Carla/Game/Tagger.h"
 #include "Carla/Util/BoundingBoxCalculator.h"
 
 #include "Carla/Traffic/TrafficSignBase.h"
 #include "Carla/Vehicle/CarlaWheeledVehicle.h"
-#include "Carla/Game/Tagger.h"
 #include "Carla/Traffic/TrafficLightBase.h"
 
 #include <compiler/disable-ue4-macros.h>

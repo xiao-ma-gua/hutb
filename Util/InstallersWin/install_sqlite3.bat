@@ -55,7 +55,7 @@ if exist "%SQLITE_INSTALL_DIR%" (
     goto already_build
 )
 
-echo %FILE_N% Retrieving %SQLITE_BASE_NAME%.
+echo %FILE_N% Retrieving %SQLITE_BASE_NAME% from %SQLITE_REPO% to %SQLITE_ZIP_DIR% ...
 powershell -Command "(New-Object System.Net.WebClient).DownloadFile('%SQLITE_REPO%', '%SQLITE_ZIP_DIR%')"
 if %errorlevel% neq 0 goto error_download
 
