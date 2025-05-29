@@ -14,8 +14,8 @@ pipeline {
             }
             stages
             {
-                stage('windows setup')
-                {
+//                stage('windows setup')
+//                {
                     steps
                     {
                         bat """
@@ -27,9 +27,9 @@ pipeline {
                             make setup ARGS="--chrono"
                         """
                     }
-                }
-                stage('windows build')
-                {
+//                }
+//                stage('windows build')
+//                {
                     steps
                     {
                         bat """
@@ -56,6 +56,16 @@ pipeline {
                             archiveArtifacts 'PythonAPI/carla/dist/*.egg'
                             archiveArtifacts 'PythonAPI/carla/dist/*.whl'
                         }
+                    }
+//                }
+                stage('windows retrieve content')
+                {
+                    steps
+                    {
+                        bat """
+                            call setEnv64.bat
+                            call Update.bat
+                        """
                     }
                 }
             }
