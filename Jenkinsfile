@@ -51,11 +51,11 @@ pipeline {
 //                   }
 //                   post
 //                   {
-                        always
-                        {
-                            archiveArtifacts 'PythonAPI/carla/dist/*.egg'
-                            archiveArtifacts 'PythonAPI/carla/dist/*.whl'
-                        }
+//                       always
+//                       {
+//                           archiveArtifacts 'PythonAPI/carla/dist/*.egg'
+//                           archiveArtifacts 'PythonAPI/carla/dist/*.whl'
+//                       }
 //                   }
 //               }
                 stage('windows retrieve content')
