@@ -58,6 +58,37 @@ pipeline {
                         }
                     }
                 }
+
+                stage('windows retrieve content')
+                {
+                    steps
+                    {
+                        bat """
+                            call setEnv64.bat
+                            call Update.bat
+                        """
+                    }
+                }
+
+                stage('windows package')
+                {
+                    steps
+                    {
+                        bat """
+                            call setEnv64.bat
+                            make package ARGS="--chrono"
+                        """
+                        bat """
+                            call setEnv64.bat
+                            make package ARGS="--packages=AdditionalMaps,Town06_Opt,Town07_Opt,Town11,Town12,Town13,Town15 --target-archive=AdditionalMaps --clean-intermediate"
+                        """
+                    }
+                    post {
+                        always {
+                            archiveArtifacts 'Build/UE4Carla/*.zip'
+                        }
+                    }
+                }
             }
         }
     }
