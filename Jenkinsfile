@@ -89,6 +89,20 @@ pipeline {
                         }
                     }
                 }
+
+
+                stage('windows deploy')
+                {
+                    when { anyOf { branch "OpenHUTB"; buildingTag() } }
+                    steps {
+                        bat """
+                            call setEnv64.bat
+                            git checkout .
+                            REM make deploy ARGS="--replace-latest"
+                        """
+                    }
+                }
+
             }
         }
     }
