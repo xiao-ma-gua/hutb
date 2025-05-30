@@ -91,6 +91,7 @@ pipeline {
                 }
 
 
+                // 需要配置亚马逊云的ID和访问密钥
                 stage('windows deploy')
                 {
                     when { anyOf { branch "OpenHUTB"; buildingTag() } }
@@ -98,13 +99,14 @@ pipeline {
                         bat """
                             call setEnv64.bat
                             git checkout .
-                            REM make deploy ARGS="--replace-latest"
+                            make deploy ARGS="--replace-latest"
                         """
                     }
                 }
 
             }
 
+          
             post
             {
                 always

@@ -22,6 +22,7 @@ if not "%1"=="" (
         set REPLACE_LATEST=true
     )
 
+    :: rem 表示进行排练，只显示上传文件到亚马逊云的命令
     if "%1"=="--dry-run" (
       set AWS_COPY=rem aws s3 cp
     )
@@ -48,7 +49,7 @@ set PACKAGE_PATH=%CARLA_DIST_FOLDER%\%PACKAGE%
 set PACKAGE2=AdditionalMaps_%REPOSITORY_TAG%.zip
 set PACKAGE_PATH2=%CARLA_DIST_FOLDER%\%PACKAGE2%
 
-set S3_PREFIX=s3://carla-releases/Windows
+set S3_PREFIX=s3://hutb
 
 set LATEST_DEPLOY_URI=!S3_PREFIX!/Dev/CARLA_Latest.zip
 set LATEST_DEPLOY_URI2=!S3_PREFIX!/Dev/AdditionalMaps_Latest.zip

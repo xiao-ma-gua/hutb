@@ -27,10 +27,17 @@ rem ============================================================================
 set BOOST_VERSION=1.80.0
 set INSTALLERS_DIR=%ROOT_PATH:/=\%Util\InstallersWin\
 set VERSION_FILE=%ROOT_PATH:/=\%Util\ContentVersions.txt
+set Carla_ROOT_DIR=%ROOT_PATH:/=\%\
+set CarlaUE4_DIR=%ROOT_PATH:/=\%Unreal\CarlaUE4\
 set CONTENT_DIR=%ROOT_PATH:/=\%Unreal\CarlaUE4\Content\Carla\
 set CARLA_DEPENDENCIES_FOLDER=%ROOT_PATH:/=\%Unreal\CarlaUE4\Plugins\Carla\CarlaDependencies\
 set CARLA_BINARIES_FOLDER=%ROOT_PATH:/=\%Unreal\CarlaUE4\Plugins\Carla\Binaries\Win64
 set CARLA_PYTHON_DEPENDENCIES=%ROOT_PATH:/=\%PythonAPI\carla\dependencies\
+:: 如果存在就不需要重新下载
+:: 资产压缩包
+set CONTENT_ZIP=C:\jenkins\Content.zip
+:: 软件依赖
+set INSTALLATION_ZIP=C:\jenkins\Installation.zip
 set USE_CHRONO=false
 set USE_ROS2=false
 
@@ -81,15 +88,37 @@ echo %FILE_N% Boost toolset:      %TOOLSET%
 echo %FILE_N% Generator:          %GENERATOR%
 echo %FILE_N% Install directory:  "%INSTALLATION_DIR%"
 
-if not exist "%CONTENT_DIR%" (
-    echo %FILE_N% Creating "%CONTENT_DIR%" folder...
-    mkdir "%CONTENT_DIR%"
-)
 
 if not exist "%INSTALLATION_DIR%" (
     echo %FILE_N% Creating "%INSTALLATION_DIR%" folder...
     mkdir "%INSTALLATION_DIR%"
+
+    :: 如果存在依赖软件的源代码压缩包，则解压到Carla主目录（包含Build目录），后面就不需要下载
+    if exist "%INSTALLATION_ZIP%" (
+        echo Extract Content from %INSTALLATION_ZIP% to %Carla_ROOT_DIR% ...
+        if exist "%ProgramW6432%/7-Zip/7z.exe" (
+            "%ProgramW6432%/7-Zip/7z.exe" x "%INSTALLATION_ZIP%" -o"%Carla_ROOT_DIR%" -y
+        ) else (
+            powershell -Command "Expand-Archive '%INSTALLATION_ZIP%' -DestinationPath '%Carla_ROOT_DIR%' -Force"
+        )
+    )
 )
+
+if not exist "%CONTENT_DIR%" (
+    echo %FILE_N% Creating "%CONTENT_DIR%" folder...
+    mkdir "%CONTENT_DIR%"
+
+    :: 如果存在资产内容的压缩包，则解压到CarlaUE4目录（包含Content目录），后面就不需要下载
+    if exist "%CONTENT_ZIP%" (
+        echo Extract Content from %CONTENT_ZIP% to %CarlaUE4_DIR% ...
+        if exist "%ProgramW6432%/7-Zip/7z.exe" (
+            "%ProgramW6432%/7-Zip/7z.exe" x "%CONTENT_ZIP%" -o"%CarlaUE4_DIR%" -y
+        ) else (
+            powershell -Command "Expand-Archive '%CONTENT_ZIP%' -DestinationPath '%CarlaUE4_DIR%' -Force"
+        )
+    )
+)
+
 
 rem ============================================================================
 rem -- Download and install zlib -----------------------------------------------
