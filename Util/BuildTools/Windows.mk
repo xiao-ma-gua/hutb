@@ -51,8 +51,9 @@ rebuild: setup
 	@"${CARLA_BUILD_TOOLS_FOLDER}/BuildOSM2ODR.bat" --rebuild
 	@"${CARLA_BUILD_TOOLS_FOLDER}/BuildPythonAPI.bat" --rebuild
 
-check: PythonAPI
-	@echo "Not implemented!"
+# PythonAPI
+check: 
+	@"${CARLA_BUILD_TOOLS_FOLDER}/Check.bat" --all
 
 benchmark: LibCarla
 	@echo "Not implemented!"

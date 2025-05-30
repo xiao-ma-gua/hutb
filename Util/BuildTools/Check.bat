@@ -1,0 +1,134 @@
+@echo off
+setlocal enabledelayedexpansion
+:: 改编自Package.bat
+
+rem don't remove next two empty lines after next
+set LF=^
+
+
+rem Bat script that compiles and exports the carla project (carla.org)
+rem Run it through a cmd with the x64 Visual C++ Toolset enabled.
+rem https://wiki.unrealengine.com/How_to_package_your_game_with_commands
+
+:: 只表示将要“运行的”bat命令的folder，不包含bat名称自己。
+:: 注意，不是“运行处”的folder （该功能用%cd%实现）
+:: %0-%9代表的是batch文件的参数。%1-%9 是batch名称之后的命令行参数，%0代表batch文件自己。
+:: d表示盘符，p表示不带盘符的路径，那么dp就表示带盘符的路径
+set LOCAL_PATH=%~dp0
+:: 当前运行脚本的文件名
+:: -[Check]
+set FILE_N=-[%~n0]:
+
+:: 打印批处理脚本的参数（为了调试）
+rem Print batch params (debug purpose)
+:: -[Check]: [Batch params]:
+echo %FILE_N% [Batch params]: %*
+
+:: 衡量测试的总共时间
+rem Measure overall execution time of testing
+call :get_current_time_in_seconds T_START_OVERALL
+
+:: 解析参数
+rem ==============================================================================
+rem -- Parse arguments -----------------------------------------------------------
+rem ==============================================================================
+
+set DOC_STRING="Run unit tests."
+set USAGE_STRING="Usage: %FILE_N% [-h|--help] [--gdb] [--xml] [--gtest_args=ARGS] [--python-version=VERSION]"
+
+set XML_OUTPUT=false
+set LIBCARLA_RELEASE=false
+set LIBCARLA_DEBUG=false
+set SMOKE_TESTS=false
+set PYTHON_API=false
+set RUN_BENCHMARK=false
+set MEASURE_TIME=true
+
+:arg-parse
+if not "%1"=="" (
+    if "%1"=="--all" (
+        set SMOKE_TESTS=true
+        set LIBCARLA_RELEASE=true
+        set LIBCARLA_DEBUG=true
+        set PYTHON_API=true
+    )
+
+    if "%1"=="--xml" (
+        set XML_OUTPUT=true
+        shift
+    )
+
+    if "%1"=="--smoke" (
+        set SMOKE_TESTS=true
+        shift
+    )
+
+    if "%1"=="-h" (
+        echo %DOC_STRING%
+        echo %USAGE_STRING%
+        GOTO :eof
+    )
+
+    if "%1"=="--help" (
+        echo %DOC_STRING%
+        echo %USAGE_STRING%
+        GOTO :eof
+    )
+
+    shift
+    goto :arg-parse
+)
+
+
+rem ============================================================================
+rem -- Run smoke tests ---------------------------------------------------------
+rem ============================================================================
+
+call :get_current_time_in_seconds T_START_DO_TEST
+
+if %SMOKE_TESTS%==true (
+    echo test connection ...
+    python %ROOT_PATH%PythonAPI/util/test_connection.py -p 2000 --timeout=60.0
+    echo test connection done.
+)
+
+call :get_current_time_in_seconds T_END_DO_TEST
+set /A ELAPSED_TIME=!T_END_DO_TEST! - !T_START_DO_TEST!
+if %MEASURE_TIME%==true if %SMOKE_TESTS%==true echo %FILE_N% [TIME]: Running smoke test took !ELAPSED_TIME! seconds.
+
+
+rem ============================================================================
+
+call :get_current_time_in_seconds T_END_OVERALL
+set /A ELAPSED_TIME=!T_END_OVERALL! - !T_START_OVERALL!
+if %MEASURE_TIME%==true echo %FILE_N% [TIME]: Overall testing took !ELAPSED_TIME! seconds.
+
+
+goto success
+
+
+
+rem ============================================================================
+rem -- Helper functions --------------------------------------------------------
+rem ============================================================================
+
+:get_current_time_in_seconds
+    for /f %%a in ('powershell -command "[int]((Get-Date -UFormat '%%s') -split ',.')[0]"') do set %1=%%a
+    goto :eof
+
+
+rem ============================================================================
+rem -- Messages and Errors -----------------------------------------------------
+rem ============================================================================
+
+:success
+    echo.
+    goto good_exit
+
+:good_exit
+    endlocal
+    exit /b 0
+
+:bad_exit
+    endlocal
+    exit /b 1
