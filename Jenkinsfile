@@ -14,6 +14,7 @@ pipeline {
             }
             stages
             {
+                /*
                 stage('windows setup')
                 {
                     steps
@@ -89,12 +90,13 @@ pipeline {
                         }
                     }
                 }
+                */
 
 
                 // 需要配置亚马逊云的ID和访问密钥
                 stage('windows deploy')
                 {
-                    when { anyOf { branch "OpenHUTB"; buildingTag() } }
+                    // when { anyOf { branch "make_deploy_dev"; buildingTag() } }
                     steps {
                         bat """
                             call setEnv64.bat
@@ -107,6 +109,7 @@ pipeline {
             }
 
           
+            /*
             post
             {
                 always
@@ -114,6 +117,7 @@ pipeline {
                     deleteDir()
                 }
             }
+            */
 
         }
     }
