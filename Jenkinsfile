@@ -14,6 +14,7 @@ pipeline {
             }
             stages
             {
+              
                 stage('windows setup')
                 {
                     steps
@@ -28,6 +29,7 @@ pipeline {
                         """
                     }
                 }
+
                 stage('windows build')
                 {
                     steps
@@ -106,7 +108,6 @@ pipeline {
             }
 
           
-            /*
             post
             {
                 always
@@ -114,7 +115,6 @@ pipeline {
                     deleteDir()
                 }
             }
-            */
 
         }
     }
