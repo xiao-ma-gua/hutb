@@ -42,7 +42,7 @@ for /f %%i in ('git describe --tags --dirty --always') do set REPOSITORY_TAG=%%i
 if not defined REPOSITORY_TAG goto error_carla_version
 echo REPOSITORY_TAG = !REPOSITORY_TAG!
 :: 用于测试
-set REPOSITORY_TAG=v1.1.0-24-gd41f90e61
+:: set REPOSITORY_TAG=v1.1.0-24-gd41f90e61
 
 rem Last package data
 set CARLA_DIST_FOLDER=%~dp0%\Build\UE4Carla
@@ -98,11 +98,11 @@ echo %AWS_COPY% Build\CMakeLists.txt.in s3://hutb/
 
 echo upload released Carla package 
 set DEPLOY_URI=!S3_PREFIX!/%DEPLOY_NAME%
-:: %AWS_COPY% %PACKAGE_PATH% %DEPLOY_URI%
+%AWS_COPY% %PACKAGE_PATH% %DEPLOY_URI%
 echo Latest build uploaded to %DEPLOY_URI%
 
 set DEPLOY_URI2=!S3_PREFIX!/%DEPLOY_NAME2%
-:: %AWS_COPY% %PACKAGE_PATH2% %DEPLOY_URI2%
+%AWS_COPY% %PACKAGE_PATH2% %DEPLOY_URI2%
 echo Latest build uploaded to %DEPLOY_URI2%
 
 rem ==============================================================================

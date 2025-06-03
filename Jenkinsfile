@@ -14,7 +14,6 @@ pipeline {
             }
             stages
             {
-                /*
                 stage('windows setup')
                 {
                     steps
@@ -90,8 +89,6 @@ pipeline {
                         }
                     }
                 }
-                */
-
 
                 // 需要配置亚马逊云的ID和访问密钥
                 stage('windows deploy')
