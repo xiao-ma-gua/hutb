@@ -92,9 +92,9 @@ rem ============================================================================
 aws configure set aws_access_key_id AKIA2CSTT3LD3A
 aws configure set aws_secret_access_key l6h6lUhmejk1oEo2CZiNUfDhi8fyK1z9haBDEaRF
 aws configure list
-echo upload test file
-echo %AWS_COPY% Build\CMakeLists.txt.in s3://hutb/
-%AWS_COPY% Build\CMakeLists.txt.in s3://hutb/
+:: echo upload test file
+:: echo %AWS_COPY% Build\CMakeLists.txt.in s3://hutb/
+:: %AWS_COPY% Build\CMakeLists.txt.in s3://hutb/
 
 echo upload released Carla package 
 set DEPLOY_URI=!S3_PREFIX!/%DEPLOY_NAME%

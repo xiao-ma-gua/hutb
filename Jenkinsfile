@@ -93,6 +93,7 @@ pipeline {
                 }
 
                 // 需要配置亚马逊云的ID和访问密钥
+                /*
                 stage('windows deploy')
                 {
                     // when { anyOf { branch "make_deploy_dev"; buildingTag() } }
@@ -104,6 +105,7 @@ pipeline {
                         """
                     }
                 }
+                */
 
             }
 
