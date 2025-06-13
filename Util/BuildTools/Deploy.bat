@@ -6,6 +6,8 @@ rem -- Set up environment ------------------------------------------------------
 rem ==============================================================================
 
 set REPLACE_LATEST=true
+:: 是否部署到pypi.org，默认不部署，只有执行 make deploy ARGS="--deploy-to-pypi"
+set DEPLOY_2_PYPI=false
 set AWS_COPY=aws s3 cp
 
 rem ==============================================================================
@@ -14,12 +16,16 @@ rem ============================================================================
 
 set DOC_STRING=Upload latest build to S3
 
-set USAGE_STRING="Usage: $0 [-h|--help] [--replace-latest] [--dry-run]"
+set USAGE_STRING="Usage: $0 [-h|--help] [--replace-latest] [--deploy-to-pypi] [--dry-run]"
 
 :arg-parse
 if not "%1"=="" (
     if "%1"=="--replace-latest" (
         set REPLACE_LATEST=true
+    )
+
+    if "%1"=="--deploy-to-pypi" (
+        set DEPLOY_2_PYPI=true
     )
 
     :: rem 表示进行排练，只显示上传文件到亚马逊云的命令
@@ -50,6 +56,7 @@ set PACKAGE=CARLA_%REPOSITORY_TAG%.zip
 set PACKAGE_PATH=%CARLA_DIST_FOLDER%\%PACKAGE%
 set PACKAGE2=AdditionalMaps_%REPOSITORY_TAG%.zip
 set PACKAGE_PATH2=%CARLA_DIST_FOLDER%\%PACKAGE2%
+set PythonAPI_FOLDER=%~dp0%\PythonAPI\carla\dist
 
 set S3_PREFIX=s3://hutb
 
@@ -80,10 +87,30 @@ if %errorlevel% == 0 (
 echo Version detected: %REPOSITORY_TAG%
 echo Using package %PACKAGE% as %DEPLOY_NAME%
 
+
+rem ==============================================================================
+rem -- 上传 PythonAPI 到 Pypi ----------------------------------------------------
+rem ==============================================================================
+
+if %DEPLOY_2_PYPI%==true (
+  set HTTPS_PROXY=127.0.0.1:7890
+  echo deploy %PythonAPI_FOLDER% to pypi...
+  for /r "%PythonAPI_FOLDER%" %%F in (*.whl) do (
+    echo Upload "%%F" to Pypi ...
+    :: 需要安装 pip install twine
+    twine upload "%%F"
+  )
+  :: twin upload 
+  goto good_exit
+)
+
+
+:: 检查需要上传的包是否存在
 if not exist "%PACKAGE_PATH%" (
   echo Latest package not found, please run 'make package'
   goto :bad_exit
 )
+
 
 rem ==============================================================================
 rem -- Upload --------------------------------------------------------------------

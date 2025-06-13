@@ -107,6 +107,10 @@ pipeline {
                 }
                 */
 
+                // 发布 PythonAPI 到 pypi
+                // 需要删除 *.egg 文件
+                // 测试：make deploy ARGS="--deploy-to-pypi"
+
             }
 
           
