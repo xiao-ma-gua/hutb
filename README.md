@@ -1,149 +1,110 @@
-CARLA Simulator
-===============
-
-[![Documentation](https://readthedocs.org/projects/carla/badge/?version=latest)](http://carla.readthedocs.io) 
-
-[![carla.org](Docs/img/btn/web.png)](http://carla.org)
-[![download](Docs/img/btn/download.png)](https://github.com/carla-simulator/carla/blob/master/Docs/download.md)
-[![documentation](Docs/img/btn/docs.png)](http://carla.readthedocs.io)
-[![forum](Docs/img/btn/forum.png)](https://github.com/carla-simulator/carla/discussions)
-[![discord](Docs/img/btn/chat.png)](https://discord.gg/8kqACuC)
-[![Gurubase](https://img.shields.io/badge/Gurubase-Ask%20CARLA%20Simulator%20Guru-006BFF)](https://gurubase.io/g/carla-simulator)
-
-CARLA is an open-source simulator for autonomous driving research. CARLA has been developed from the ground up to support development, training, and
-validation of autonomous driving systems. In addition to open-source code and protocols, CARLA provides open digital assets (urban layouts, buildings,
-vehicles) that were created for this purpose and can be used freely. The simulation platform supports flexible specification of sensor suites and
-environmental conditions.
-
-[![CARLA Video](Docs/img/0_9_15_thumbnail.webp)](https://www.youtube.com/watch?v=q4V9GYjA1pE )
-
->[!NOTE]
->This is the development branch `ue4-dev` for the **Unreal Engine 4.26 version of CARLA**. This branch exists in parallel with the Unreal Engine 5.3 version of CARLA, in the `ue5-dev` branch. Please be sure that this version of CARLA is suitable for your needs as there are significant differences between the UE 4.26 and UE 5.3 versions of CARLA. 
-
-### Download CARLA
-
-Linux:
-* [**Get CARLA overnight build**](https://tiny.carla.org/carla-latest-linux)
-* [**Get AdditionalMaps overnight build**](https://tiny.carla.org/additional-maps-latest-linux)
-
-Windows:
-* [**Get CARLA overnight build**](https://tiny.carla.org/carla-latest-windows)
-* [**Get AdditionalMaps overnight build**](https://tiny.carla.org/additional-maps-latest-windows)
-
->[!WARNING]
->The CARLA package downloads are now provided using the BackBlaze CDN. The Amazon Web Service download links have been discontinued. Please ensure you update any relevant information in repositories using the CARLA simulator package versions. 
-
-### Recommended system
-
-* Intel i7 gen 9th - 11th / Intel i9 gen 9th - 11th / AMD ryzen 7 / AMD ryzen 9
-* +32 GB RAM memory
-* NVIDIA RTX 3070 / NVIDIA RTX 3080 / NVIDIA RTX 4090
-* Ubuntu 20.04
-
-## Documentation
-
-The [CARLA documentation](https://carla.readthedocs.io/en/latest/) is hosted on ReadTheDocs. Please see the following key links:
-
-- [Building on Linux](https://carla.readthedocs.io/en/latest/build_linux/)
-- [Building on Windows](https://carla.readthedocs.io/en/latest/build_windows/)
-- [First steps](https://carla.readthedocs.io/en/latest/tuto_first_steps/)
-- [CARLA asset catalogue](https://carla.readthedocs.io/en/latest/catalogue/)
-- [Python API reference](https://carla.readthedocs.io/en/latest/python_api/)
-- [Blueprint library](https://carla.readthedocs.io/en/latest/bp_library/)
-
-## CARLA Ecosystem
-Repositories associated with the CARLA simulation platform:
-
-* [**CARLA Autonomous Driving leaderboard**](https://leaderboard.carla.org/): Automatic platform to validate Autonomous Driving stacks
-* [**Scenario_Runner**](https://github.com/carla-simulator/scenario_runner): Engine to execute traffic scenarios in CARLA 0.9.X
-* [**ROS-bridge**](https://github.com/carla-simulator/ros-bridge): Interface to connect CARLA 0.9.X to ROS
-* [**Driving-benchmarks**](https://github.com/carla-simulator/driving-benchmarks): Benchmark tools for Autonomous Driving tasks
-* [**Conditional Imitation-Learning**](https://github.com/felipecode/coiltraine): Training and testing Conditional Imitation Learning models in CARLA
-* [**AutoWare AV stack**](https://github.com/carla-simulator/carla-autoware): Bridge to connect AutoWare AV stack to CARLA
-* [**Reinforcement-Learning**](https://github.com/carla-simulator/reinforcement-learning): Code for running Conditional Reinforcement Learning models in CARLA
-* [**RoadRunner**](https://www.mathworks.com/products/roadrunner.html): MATLAB GUI based application to create road networks in the ASAM OpenDRIVE format
-* [**Map Editor**](https://github.com/carla-simulator/carla-map-editor): Standalone GUI application to enhance RoadRunner maps with traffic lights and traffic signs information
+# 人车模拟器
 
 
-**Like what you see? Star us on GitHub to support the project!**
+该项目是一个用于研究人和车的开源仿真器。
+基于 Carla 和 OpenSim 开发，旨在支持人车系统的开发、训练和验证。
+除了开源代码外，还提供了为此目的创建的可自由使用的开放数字资产（城市布局、建筑、车辆、行人）。
+该模拟平台支持传感器套件和环境条件的灵活规范。
+具体介绍请参考 [中文文档](https://openhutb.github.io) 。
 
-Paper
------
-
-If you use CARLA, please cite our CoRL’17 paper.
-
-_CARLA: An Open Urban Driving Simulator_<br>Alexey Dosovitskiy, German Ros,
-Felipe Codevilla, Antonio Lopez, Vladlen Koltun; PMLR 78:1-16
-[[PDF](http://proceedings.mlr.press/v78/dosovitskiy17a/dosovitskiy17a.pdf)]
-[[talk](https://www.youtube.com/watch?v=xfyK03MEZ9Q&feature=youtu.be&t=2h44m30s)]
-
-
+## 入门示例
+1. 下载 [链接](https://pan.baidu.com/s/1n2fJvWff4pbtMe97GOqtvQ?pwd=hutb) 中的`software/car/DReyeVR`中的`hutb_*.zip`文件并解压；
+2. 运行`WindowsNoEditor`文件夹下的`CarlaUE4.exe`，使用键盘进行控制；
+3. 使用`pip install hutb`安装Python工具包，运行以下脚本在场景中生成车辆和行人：
+```shell
+python generate_traffic.py
 ```
-@inproceedings{Dosovitskiy17,
-  title = {{CARLA}: {An} Open Urban Driving Simulator},
-  author = {Alexey Dosovitskiy and German Ros and Felipe Codevilla and Antonio Lopez and Vladlen Koltun},
-  booktitle = {Proceedings of the 1st Annual Conference on Robot Learning},
-  pages = {1--16},
-  year = {2017}
-}
+显示手动控制车辆：
+```shell
+python manual_control.py
 ```
 
-Building CARLA
---------------
 
-Clone this repository locally from GitHub:
+
+## 编译 Carla
+
+使用`git clone`或从此页面下载项目。请注意，hutb分支包含最新版本以及最新的修复程序和功能。
+
+然后按照 [如何在Windows上构建中文说明](https://github.com/OpenHUTB/roadrunner_scenario/blob/master/ug/carla_windows_build.mlx) 、[如何在Linux上构建][buildlinuxlink]中的说明进行操作。  
+
+Linux版本需要一个UE补丁来解决有关Vulkan的一些可视化问题。
+那些已经使用Linux构建的用户应该安装补丁，并使用以下命令重新构建UE。
 
 ```sh
-git clone https://github.com/carla-simulator/carla.git .
+# 下载并安装虚幻引擎补丁  
+cd ~/UnrealEngine_4.24
+wget https://carla-releases.s3.eu-west-3.amazonaws.com/Linux/UE_Patch/430667-13636743-patch.txt ~/430667-13636743-patch.txt
+patch --strip=4 < ~/430667-13636743-patch.txt
+# 构建虚幻引擎
+./Setup.sh && ./GenerateProjectFiles.sh && make
 ```
 
-Also, clone the [CARLA fork of the Unreal Engine](https://github.com/CarlaUnreal/UnrealEngine) into an appropriate location:
 
-```sh
-git clone --depth 1 -b carla https://github.com/CarlaUnreal/UnrealEngine.git .
-```
+[buildlinuxlink]: https://openhutb.github.io/doc/build_linux/
+[buildwindowslink]: https://openhutb.github.io/doc/build_windows/
 
-Once you have cloned the repositories, follow the instructions for [building in Linux][buildlinuxlink] or [building in Windows][buildwindowslink].
 
-[buildlinuxlink]: https://carla.readthedocs.io/en/latest/build_linux/
-[buildwindowslink]: https://carla.readthedocs.io/en/latest/build_windows/
+### 软硬件要求
 
-Contributing
-------------
+* 处理器：Intel i7 gen 9th - 11th / Intel i9 gen 9th - 11th / AMD ryzen 7 / AMD ryzen 9
+* 内存：+16 GB
+* 显卡：NVIDIA RTX 2070 / NVIDIA RTX 2080 / NVIDIA RTX 3070, NVIDIA RTX 3080
+* 操作系统：Windows 10, Ubuntu 18.04
 
-Please take a look at our [Contribution guidelines][contriblink].
+## 生态系统
 
-[contriblink]: https://carla.readthedocs.io/en/latest/cont_contribution_guidelines/
+与模拟平台相关的存储库：
 
-F.A.Q.
-------
+* [**CARLA 自动驾驶排行榜**](https://leaderboard.carla.org/): 用于验证自动驾驶技术栈的自动平台
+* [**Scenario_Runner**](https://github.com/carla-simulator/scenario_runner): Carla 0.9.X中执行交通场景的引擎
+* [**ROS-bridge**](https://github.com/carla-simulator/ros-bridge): Carla 0.9.X和ROS的接口
+* [**驾驶基准**](https://github.com/carla-simulator/driving-benchmarks): 用于自动驾驶任务的基准工具
+* [**条件模仿学习**](https://github.com/felipecode/coiltraine): Carla 中条件模拟学习（Conditional Imitation Learning）模型的训练和测试
+* [**AutoWare AV stack**](https://github.com/carla-simulator/carla-autoware): 连接AutoWare AV 栈和 Carla 的桥接器
+* [**强化学习**](https://github.com/carla-simulator/reinforcement-learning): Carla 中运行条件强化学习（Conditional Reinforcement Learning）模型的代码
+* [**地图编辑器**](https://github.com/carla-simulator/carla-map-editor): 独立的GUI应用程序，可通过红绿灯和交通标志信息增强RoadRunner地图
+* [**智能驾驶系统**](https://github.com/CAS-LRJ/ISS): 中科院自动驾驶算法开发、测试、仿真与验证平台 
 
-If you run into problems, check our
-[FAQ](https://carla.readthedocs.io/en/latest/build_faq/).
 
-Licenses
--------
 
-#### CARLA licenses
+## 其他
 
-CARLA specific code is distributed under MIT License.
+除了文档之外，还为用户创建了一些附加内容。这是一种涵盖不同主题的好方法，例如对特定模块的详细解释、功能的最新改进、未来的工作等等。
 
-CARLA specific assets are distributed under CC-BY License.
+*   __常规__  
+	*   艺术改进：环境和渲染 — [视频](https://youtu.be/ZZaHevsz8W8) | [PPT](https://drive.google.com/file/d/1l9Ztaq0Q8fNN5YPU4-5vL13eZUwsQl5P/view?usp=sharing)  
+	*   核心实现：同步、快照和地标 — [视频](https://youtu.be/nyyTLmphqY4) | [PPT](https://drive.google.com/file/d/1yaOwf1419qWZqE1gTSrrknsWOhawEWh_/view?usp=sharing)
+	*   数据摄入 — [视频](https://youtu.be/mHiUUZ4xC9o) | [PPT](https://drive.google.com/file/d/10uNBAMreKajYimIhwCqSYXjhfVs2bX31/view?usp=sharing)  
+	*   行人及其实现 — [视频](https://youtu.be/Uoz2ihDwaWA) | [PPT](https://drive.google.com/file/d/1Tsosin7BLP1k558shtbzUdo2ZXVKy5CB/view?usp=sharing)  
+	*   Carla 中的传感器 — [视频](https://youtu.be/T8qCSet8WK0) | [PPT](https://drive.google.com/file/d/1UO8ZAIOp-1xaBzcFMfn_IoipycVkUo4q/view?usp=sharing)  
+*   __模块__  
+	*   交通管理器的改进 — [视频](https://youtu.be/n9cufaJ17eA) | [PPT](https://drive.google.com/file/d/1R9uNZ6pYHSZoEBxs2vYK7swiriKbbuxo/view?usp=sharing)  
+	*   汽车软件与ROS的集成 — [视频](https://youtu.be/ChIgcC2scwU) | [PPT](https://drive.google.com/file/d/1uO6nBaFirrllb08OeqGAMVLApQ6EbgAt/view?usp=sharing)  
+	*   ScenarioRunner简介 — [视频](https://youtu.be/dcnnNJowqzM) | [PPT](https://drive.google.com/file/d/1zgoH_kLOfIw117FJGm2IVZZAIRw9U2Q0/view?usp=sharing)  
+	*   OpenSCENARIO 支持 — [PPT](https://drive.google.com/file/d/1g6ATxZRTWEdstiZwfBN1_T_x_WwZs0zE/view?usp=sharing)  
+*   __特点__  
+	*   与SUMO和PTV Vissim的联合仿真 — [视频](https://youtu.be/PuFSbj1PU94) | [PPT](https://drive.google.com/file/d/10DgMNUBqKqWBrdiwBiAIT4DdR9ObCquI/view?usp=sharing)  
+	*   RSS-lib 的集成 — [PPT](https://drive.google.com/file/d/1whREmrCv67fOMipgCk6kkiW4VPODig0A/view?usp=sharing)  
+	*   外部传感器接口（External Sensor Interface，ESI） — [视频](https://youtu.be/5hXHPV9FIeY) | [PPT](https://drive.google.com/file/d/1VWFaEoS12siW6NtQDUkm44BVO7tveRbJ/view?usp=sharing)  
+	*   OpenDRIVE 独立模式 — [视频](https://youtu.be/U25GhofVV1Q) | [PPT](https://drive.google.com/file/d/1D5VsgfX7dmgPWn7UtDDid3-OdS1HI4pY/view?usp=sharing)  
 
-#### CARLA Dependency and Integration licenses
+## 开发
 
-The ad-rss-lib library compiled and linked by the [RSS Integration build variant](Docs/adv_rss.md) introduces [LGPL-2.1-only License](https://opensource.org/licenses/LGPL-2.1).
+windows操作系统下通过vs2019打开并编译carla：
 
-Unreal Engine 4 follows its [own license terms](https://www.unrealengine.com/en-US/faq).
+1. 开Carla的CMake项目：
 
-CARLA uses three dependencies as part of the SUMO integration:
-- [PROJ](https://proj.org/), a generic coordinate transformation software which uses the [X/MIT open source license](https://proj.org/about.html#license).
-- [SQLite](https://www.sqlite.org), part of the PROJ dependencies, which is [in the public domain](https://www.sqlite.org/purchase/license).
-- [Xerces-C](https://xerces.apache.org/xerces-c/), a validating XML parser, which is made available under the [Apache Software License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
+	File-->Open-->CMake, 在对话框中找到carla所在的本地文件夹（包含CMakeLists），选择CMakeLists.txt文件，打开，Visual studio会自动加载此仓库，解析CMakeLists.txt 文件，并提取其配置和变量信息。解析完成会从`解决方案资源管理器`中看到.cpp文件。
 
-CARLA uses one dependency as part of the Chrono integration:
-- [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page), a C++ template library for linear algebra which uses the [MPL2 license](https://www.mozilla.org/en-US/MPL/2.0/).
+2. 修改配置
+点击`x64-Debug`下拉菜单中的`管理配置`，并在弹出的界面点击`编辑JSON`，
 
-CARLA uses the Autodesk FBX SDK for converting FBX to OBJ in the import process of maps. This step is optional, and the SDK is located [here](https://www.autodesk.com/developer-network/platform-technologies/fbx-sdk-2020-0)
+将所需要构建的类型改为想编译的类型，比如`Client`。
 
-This software contains Autodesk® FBX® code developed by Autodesk, Inc. Copyright 2020 Autodesk, Inc. All rights, reserved. Such code is provided "as is" and Autodesk, Inc. disclaims any and all warranties, whether express or implied, including without limitation the implied warranties of merchantability, fitness for a particular purpose or non-infringement of third party rights. In no event shall Autodesk, Inc. be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of such code."
+3. 生成：
+点击菜单栏`生成`-`全部生成`或`部分生成`即可。
+
+## 发布
+
+包含所有软件依赖，双击`launch.bat`启动软件。
+
