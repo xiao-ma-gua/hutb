@@ -8,6 +8,7 @@ TrafficManager/build
 Util/Build
 Install
 Plugins
+build/
 # added by DReyeVR so only Carla plugins are tracked
 !Unreal/CarlaUE4/Plugins/Carla*
 
@@ -73,5 +74,8 @@ _out*
 _site
 core
 profiler.csv
+.env
+.venv
+devcontainer.json
 CarlaUE4.xcworkspace
 OptionalModules.ini
