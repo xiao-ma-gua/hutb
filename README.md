@@ -23,7 +23,7 @@
 ## 源码编译
 
 使用`git clone`或从此页面下载项目。请注意，hutb分支包含最新版本以及最新的修复程序和功能。
-然后按照 [如何在Windows上构建中文说明](https://openhutb.github.io/doc/build_windows/) 、[如何在Linux上构建]([https://openhutb.github.io/doc/build_linux/) 中的说明进行操作。
+然后按照 [如何在Windows上构建中文说明](https://openhutb.github.io/doc/build_windows/) 、[如何在Linux上构建](https://openhutb.github.io/doc/build_linux/) 中的说明进行操作。
 
 
 >[!NOTE]
