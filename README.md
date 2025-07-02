@@ -1,59 +1,54 @@
 # 人车模拟器
 
 
-该项目是一个用于研究人和车的开源仿真器。
-基于 Carla 和 OpenSim 开发，旨在支持人车系统的开发、训练和验证。
-除了开源代码外，还提供了为此目的创建的可自由使用的开放数字资产（城市布局、建筑、车辆、行人）。
-该模拟平台支持传感器套件和环境条件的灵活规范。
-具体介绍请参考 [中文文档](https://openhutb.github.io) 。
-
-## 入门示例
-1. 下载 [链接](https://pan.baidu.com/s/1n2fJvWff4pbtMe97GOqtvQ?pwd=hutb) 中的`software/car/DReyeVR`中的`hutb_*.zip`文件并解压；
-2. 运行`WindowsNoEditor`文件夹下的`CarlaUE4.exe`，使用键盘进行控制；
-3. 使用`pip install hutb`安装Python工具包，运行以下脚本在场景中生成车辆和行人：
-```shell
-python generate_traffic.py
-```
-显示手动控制车辆：
-```shell
-python manual_control.py
-```
+该项目是一个用于研究人和车的高保真开源模拟器。
+基于 [Carla-DReyeVR](https://openhutb.github.io/doc/interbehavior/) 和 [OpenSim](https://openhutb.github.io/doc/pedestrian/tuto_content_chrono_opensim/) 开发，旨在支持人车系统的开发、训练和验证。
+除了开源代码外，还提供了为此目的创建的可自由使用的开放数字资产（[城镇布局](https://openhutb.github.io/doc/core_map/#non-layered-maps) 、[建筑](https://openhutb.github.io/doc/catalogue/) 、[车辆](https://openhutb.github.io/doc/catalogue_vehicles/) 、[行人](https://openhutb.github.io/doc/catalogue_pedestrians/) 、[道具](https://openhutb.github.io/doc/catalogue_props/) 等）。
+该模拟平台支持 [传感器](https://openhutb.github.io/doc/ref_sensors/) 、[数据合成](https://openhutb.github.io/doc/tuto_G_retrieve_data/) 、[交通管理器](https://openhutb.github.io/doc/adv_traffic_manager/) 、[多物理场仿真](https://openhutb.github.io/doc/tuto_G_chrono/) 、[行人导航](https://openhutb.github.io/doc/tuto_G_pedestrian_navigation/) 、[Python接口](https://openhutb.github.io/doc/python_api/) 等的标准规范。
+详细介绍请参考 [模拟器文档](https://openhutb.github.io) 。
 
 
+## 使用示例
+1. 下载 [链接](https://pan.baidu.com/s/1n2fJvWff4pbtMe97GOqtvQ?pwd=hutb) 中的`software/car/DReyeVR`中的`hutb_*.zip`文件并解压；然后运行`WindowsNoEditor`文件夹下的`CarlaUE4.exe`，使用键盘`W`、`A`、`S`、`D`等进行控制；
+2. 使用`pip install hutb`安装Python工具包，运行以下脚本在场景中 [生成车辆和行人](https://github.com/OpenHUTB/doc/blob/master/src/examples/generate_traffic.py) ：
+	```shell
+	python PythonAPI/examples/generate_traffic.py
+	```
+	[手动控制车辆](https://github.com/OpenHUTB/doc/blob/master/src/examples/manual_control.py) ：
+	```shell
+	python PythonAPI/examples/manual_control.py
+	```
 
-## 编译 Carla
+
+## 源码编译
 
 使用`git clone`或从此页面下载项目。请注意，hutb分支包含最新版本以及最新的修复程序和功能。
+然后按照 [如何在Windows上构建中文说明](https://openhutb.github.io/doc/build_windows/) 、[如何在Linux上构建]([https://openhutb.github.io/doc/build_linux/) 中的说明进行操作。
 
-然后按照 [如何在Windows上构建中文说明](https://github.com/OpenHUTB/roadrunner_scenario/blob/master/ug/carla_windows_build.mlx) 、[如何在Linux上构建][buildlinuxlink]中的说明进行操作。  
 
-Linux版本需要一个UE补丁来解决有关Vulkan的一些可视化问题。
-那些已经使用Linux构建的用户应该安装补丁，并使用以下命令重新构建UE。
-
-[buildlinuxlink]: https://openhutb.github.io/doc/build_linux/
-[buildwindowslink]: https://openhutb.github.io/doc/build_windows/
+>[!注意]
+> 艺术创作人员可以不编译，先 [安装 vs2019社区版](https://openhutb.github.io/doc/build_windows/#visual-studio-2019) ，然后下载 [链接](https://pan.baidu.com/s/1n2fJvWff4pbtMe97GOqtvQ?pwd=hutb) 中的`software/car/carla_unreal_*.zip`文件并解压，双击`launch_carla_editor.bat`即可启动带插件的虚幻编辑器。
 
 
 ### 软硬件要求
 
 * 处理器：Intel i7 gen 9th - 11th / Intel i9 gen 9th - 11th / AMD ryzen 7 / AMD ryzen 9
 * 内存：+16 GB
-* 显卡：NVIDIA RTX 2070 / NVIDIA RTX 2080 / NVIDIA RTX 3070, NVIDIA RTX 3080
-* 操作系统：Windows 10, Ubuntu 18.04
+* 显卡：NVIDIA RTX 2070 以上
+* 操作系统：Windows 10+、Ubuntu 18.04+、MacOS 12+。
 
 ## 生态系统
 
 与模拟平台相关的存储库：
 
-* [**CARLA 自动驾驶排行榜**](https://leaderboard.carla.org/): 用于验证自动驾驶技术栈的自动平台
+* [**相关应用**](https://openhutb.github.io/doc/used_by/): 包括 [感知](https://openhutb.github.io/doc/used_by/#perception) 、[规划](https://openhutb.github.io/doc/used_by/#planning) 、[控制](https://openhutb.github.io/doc/used_by/#control) 、[端到端](https://openhutb.github.io/doc/used_by/#end_2_end) 、[大模型](https://openhutb.github.io/doc/used_by/#llm) 、[行人](https://openhutb.github.io/doc/used_by/#pedestrian) 、[智能体](https://openhutb.github.io/doc/used_by/#agent) 、[可解释](https://openhutb.github.io/doc/used_by/#explainability) 等
+* [**自动驾驶排行榜**](https://leaderboard.carla.org/): 用于验证自动驾驶技术栈的自动平台
 * [**Scenario_Runner**](https://github.com/carla-simulator/scenario_runner): Carla 0.9.X中执行交通场景的引擎
 * [**ROS-bridge**](https://github.com/carla-simulator/ros-bridge): Carla 0.9.X和ROS的接口
 * [**驾驶基准**](https://github.com/carla-simulator/driving-benchmarks): 用于自动驾驶任务的基准工具
-* [**条件模仿学习**](https://github.com/felipecode/coiltraine): Carla 中条件模拟学习（Conditional Imitation Learning）模型的训练和测试
 * [**AutoWare AV stack**](https://github.com/carla-simulator/carla-autoware): 连接AutoWare AV 栈和 Carla 的桥接器
-* [**强化学习**](https://github.com/carla-simulator/reinforcement-learning): Carla 中运行条件强化学习（Conditional Reinforcement Learning）模型的代码
 * [**地图编辑器**](https://github.com/carla-simulator/carla-map-editor): 独立的GUI应用程序，可通过红绿灯和交通标志信息增强RoadRunner地图
-* [**智能驾驶系统**](https://github.com/CAS-LRJ/ISS): 中科院自动驾驶算法开发、测试、仿真与验证平台 
+* [**强化学习**](https://openhutb.github.io/doc/used_by/#rl): 各种强化学习模型的代码
 
 
 
@@ -72,29 +67,14 @@ Linux版本需要一个UE补丁来解决有关Vulkan的一些可视化问题。
 	*   汽车软件与ROS的集成 — [视频](https://youtu.be/ChIgcC2scwU) | [PPT](https://drive.google.com/file/d/1uO6nBaFirrllb08OeqGAMVLApQ6EbgAt/view?usp=sharing)  
 	*   ScenarioRunner简介 — [视频](https://youtu.be/dcnnNJowqzM) | [PPT](https://drive.google.com/file/d/1zgoH_kLOfIw117FJGm2IVZZAIRw9U2Q0/view?usp=sharing)  
 	*   OpenSCENARIO 支持 — [PPT](https://drive.google.com/file/d/1g6ATxZRTWEdstiZwfBN1_T_x_WwZs0zE/view?usp=sharing)  
+	*   人运动的生物力学 — [教程](https://github.com/OpenHUTB/move) | [PPT](https://drive.google.com/file/d/1g6ATxZRTWEdstiZwfBN1_T_x_WwZs0zE/view?usp=sharing) | [示例](https://opensimconfluence.atlassian.net/wiki/spaces/OpenSim/pages/53088695/Examples+and+Tutorials)
 *   __特点__  
 	*   与SUMO和PTV Vissim的联合仿真 — [视频](https://youtu.be/PuFSbj1PU94) | [PPT](https://drive.google.com/file/d/10DgMNUBqKqWBrdiwBiAIT4DdR9ObCquI/view?usp=sharing)  
 	*   RSS-lib 的集成 — [PPT](https://drive.google.com/file/d/1whREmrCv67fOMipgCk6kkiW4VPODig0A/view?usp=sharing)  
 	*   外部传感器接口（External Sensor Interface，ESI） — [视频](https://youtu.be/5hXHPV9FIeY) | [PPT](https://drive.google.com/file/d/1VWFaEoS12siW6NtQDUkm44BVO7tveRbJ/view?usp=sharing)  
 	*   OpenDRIVE 独立模式 — [视频](https://youtu.be/U25GhofVV1Q) | [PPT](https://drive.google.com/file/d/1D5VsgfX7dmgPWn7UtDDid3-OdS1HI4pY/view?usp=sharing)  
 
-## 开发
 
-windows操作系统下通过vs2019打开并编译carla：
 
-1. 开Carla的CMake项目：
 
-	File-->Open-->CMake, 在对话框中找到carla所在的本地文件夹（包含CMakeLists），选择CMakeLists.txt文件，打开，Visual studio会自动加载此仓库，解析CMakeLists.txt 文件，并提取其配置和变量信息。解析完成会从`解决方案资源管理器`中看到.cpp文件。
-
-2. 修改配置
-点击`x64-Debug`下拉菜单中的`管理配置`，并在弹出的界面点击`编辑JSON`，
-
-将所需要构建的类型改为想编译的类型，比如`Client`。
-
-3. 生成：
-点击菜单栏`生成`-`全部生成`或`部分生成`即可。
-
-## 发布
-
-包含所有软件依赖，双击`launch.bat`启动软件。
 
