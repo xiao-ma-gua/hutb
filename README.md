@@ -26,7 +26,7 @@
 然后按照 [如何在Windows上构建中文说明](https://openhutb.github.io/doc/build_windows/) 、[如何在Linux上构建]([https://openhutb.github.io/doc/build_linux/) 中的说明进行操作。
 
 
->[!注意]
+>[!NOTE]
 > 艺术创作人员可以不编译，先 [安装 vs2019社区版](https://openhutb.github.io/doc/build_windows/#visual-studio-2019) ，然后下载 [链接](https://pan.baidu.com/s/1n2fJvWff4pbtMe97GOqtvQ?pwd=hutb) 中的`software/car/carla_unreal_*.zip`文件并解压，双击`launch_carla_editor.bat`即可启动带插件的虚幻编辑器。
 
 
