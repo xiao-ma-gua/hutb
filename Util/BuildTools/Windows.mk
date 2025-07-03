@@ -56,8 +56,12 @@ rebuild: setup
 	@"${CARLA_BUILD_TOOLS_FOLDER}/BuildPythonAPI.bat" --rebuild
 
 # PythonAPI
-check: 
+check:
 	@"${CARLA_BUILD_TOOLS_FOLDER}/Check.bat" --all
+
+# somke test
+smoke_tests:
+	@"${CARLA_BUILD_TOOLS_FOLDER}/Check.bat" --smoke
 
 benchmark: LibCarla
 	@echo "Not implemented!"

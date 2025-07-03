@@ -82,7 +82,7 @@ pipeline {
                         """
                         bat """
                             call setEnv64.bat
-                            make package ARGS="--packages=AdditionalMaps,Town06_Opt,Town07_Opt,Town11,Town12,Town13,Town15 --target-archive=AdditionalMaps --clean-intermediate"
+                            make package ARGS="--packages=AdditionalMaps,Town06_Opt,Town07_Opt,Town11,Town12,Town13,Town15 --target-archive=AdditionalMaps"
                         """
                     }
                     post {
@@ -91,6 +91,28 @@ pipeline {
                         }
                     }
                 }
+
+
+                stage('windows test')
+                {
+                    // 后台启动服务（不弹出界面，用于测试）
+                    steps
+                    {
+                        bat """
+                            call setEnv64.bat
+                            Build/UE4Carla/CarlaUE4.exe -RenderOffscreen
+                        """
+                        bat """
+                            call setEnv64.bat
+                            make smoke_tests
+                        """
+                        bat """
+                            call setEnv64.bat
+                            for /f "tokens=5" %%a in ('netstat -ano ^| findstr :2000') do taskkill /F /PID %%a
+                        """
+                    }
+                }
+
 
                 // 需要配置亚马逊云的ID和访问密钥
                 /*
