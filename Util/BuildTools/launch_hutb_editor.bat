@@ -11,11 +11,11 @@ chcp 65001 > nul
 setlocal enabledelayedexpansion
 
 
-:: 安装 vs2019
-if exist "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\" (
-    echo Visual Studio 2019 exist.
+:: 安装 vs2022
+if exist "%ProgramFiles%\Microsoft Visual Studio\2022\" (
+    echo Visual Studio 2022 exist.
 ) else (
-    echo Visual Studio 2019 not exist
+    echo Visual Studio 2022 not exist
     set visual_studio_components=^
         Microsoft.VisualStudio.Workload.NativeDesktop ^
         Microsoft.VisualStudio.Workload.NativeGame ^
@@ -34,7 +34,7 @@ if exist "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\" (
     :: --passive    显示用户界面，但不请求用户进行任何交互
     :: --wait       返回退出代码之前，该进程会等待安装完成。自动安装过程中，需要等待安装完成以便处理从该安装返回的代码时，此进程非常有用。
     :: --norestart  如果存在，则带有 --passive 或 --quiet 的命令不会自动重启计算机（若需要）。如果未指定 --passive 和 --quiet，则忽略此命令行。
-    vs_community__2019.exe --add %visual_studio_components% --passive --wait --norestart || exit /b
+    vs_community.exe --add %visual_studio_components% --passive --wait --norestart || exit /b
 )
 
     
@@ -90,9 +90,13 @@ if exist "!FullUnrealEnginePath!" (
     echo Unreal Engine path not found.  
     exit /b  
 )  
+
+call "%PROGRAMFILES%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" || exit /b
+cd !scriptDir!\carla1
   
 REM 启动UE4Editor.exe并传递uprojectPath的完整路径  
-start "" "UE4Editor.exe" "!FulluprojectPath!"  
+:: start "" "UE4Editor.exe" "!FulluprojectPath!"  
+make launch ARGS="--chrono"
  
 
 REM 结束本地环境变量设置    
