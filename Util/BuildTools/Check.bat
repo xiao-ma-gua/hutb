@@ -85,11 +85,35 @@ rem ============================================================================
 rem -- Run smoke tests ---------------------------------------------------------
 rem ============================================================================
 
+:: 获取CarlaUE4所在的目录（参考Package.bat）
+:: for /f %%i in ('git describe --tags --dirty --always') do set CARLA_VERSION=%%i
+:: if not defined CARLA_VERSION goto error_carla_version
+
+:: set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%/
+
+:: 查找目录下的第一个文件夹名称
+set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla
+echo BUILD_FOLDER: %BUILD_FOLDER%
+for /d %%d in (%BUILD_FOLDER%\*) do (
+    echo %%d
+    set exe_dir=%%d
+    echo exe_dir: %exe_dir%
+    GOTO GET_INI
+)
+:GET_INI
+
+:: set DESTINATION_ZIP=%INSTALLATION_DIR%UE4Carla/CARLA_%CARLA_VERSION%.zip
+set exe_path=!exe_dir!\WindowsNoEditor\CarlaUE4.exe
+:: 必须使用start来启动一个新的服务进程，否则会卡死  -RenderOffscreen
+echo Unreal service is launching with command: start %exe_path% -RenderOffscreen ...
+start %exe_path% -RenderOffscreen
+
 call :get_current_time_in_seconds T_START_DO_TEST
 
 if %SMOKE_TESTS%==true (
     echo test connection ...
-    python %ROOT_PATH%PythonAPI/util/test_connection.py -p 2000 --timeout=60.0
+    :: TODO 替换为相对Python环境路径
+    C:\software\anaconda3\envs\carla_dev\python.exe %ROOT_PATH%PythonAPI/util/test_connection.py -p 2000 --timeout=60.0
     echo test connection done.
 )
 
@@ -99,6 +123,9 @@ if %MEASURE_TIME%==true if %SMOKE_TESTS%==true echo %FILE_N% [TIME]: Running smo
 
 
 rem ============================================================================
+:: 杀死服务端
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr :2000') do taskkill /F /PID %%a
+
 
 call :get_current_time_in_seconds T_END_OVERALL
 set /A ELAPSED_TIME=!T_END_OVERALL! - !T_START_OVERALL!
