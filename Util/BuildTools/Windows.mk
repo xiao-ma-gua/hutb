@@ -55,11 +55,17 @@ rebuild: setup
 	@"${CARLA_BUILD_TOOLS_FOLDER}/BuildOSM2ODR.bat" --rebuild
 	@"${CARLA_BUILD_TOOLS_FOLDER}/BuildPythonAPI.bat" --rebuild
 
-# PythonAPI
+
 check:
 	@"${CARLA_BUILD_TOOLS_FOLDER}/Check.bat" --all
 
-# somke test
+
+# 仅用于调试
+# check.PythonAPI:
+check.PythonAPI: PythonAPI
+	@"${CARLA_BUILD_TOOLS_FOLDER}/Check.bat" --python-api
+
+# somke testc
 smoke_tests:
 	@"${CARLA_BUILD_TOOLS_FOLDER}/Check.bat" --smoke
 
