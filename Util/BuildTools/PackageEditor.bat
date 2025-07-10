@@ -160,9 +160,9 @@ mkdir %editor_dir%
 
 
 :: copy launch_carla_editor.bat
-xcopy %ROOT_PATH:/=\%Util\BuildTools\launch_hutb_editor.bat %editor_dir% /e /y /h /r /q
+copy %ROOT_PATH:/=\%Util\BuildTools\launch_hutb_editor.bat %editor_dir%
 :: copy Visual Studio 2022 Installer
-xcopy %offline_dir:/=\%vs_community.exe  %editor_dir% /e /y /h /r /q
+copy %offline_dir:/=\%vs_community.exe  %editor_dir%
 :: 解压 software.zip 中的 4 个依赖软件：cmake、dotnet、make、python3_7 到 hutb_editor 目录下
 if exist "%offline_dir%software\" (
     echo xcopy %offline_dir%software\  %editor_dir%  /e /y /h /r /q
@@ -188,7 +188,7 @@ if exist "%offline_dir%software\" (
 if not exist "%ROOT_PATH:/=\%Build\UE4Carla\hutb_editor\carla1\" (
     xcopy %offline_dir%hutb\  %ROOT_PATH:/=\%Build\UE4Carla\hutb_editor\carla1\  /e /y /h /r /q
     :: copy Unreal plugin
-    xcopy %offline_dir%StreetMap\  %ROOT_PATH:/=\%Build\UE4Carla\hutb_editor\carla1\Unreal\CarlaUE4\Plugins\StreetMap  /e /y /h /r /q
+    xcopy %offline_dir%StreetMap\  %ROOT_PATH:/=\%Build\UE4Carla\hutb_editor\carla1\Unreal\CarlaUE4\Plugins\StreetMap\  /e /y /h /r /q
 ) else (
     echo Exist hutb source code, skip copy it.
 )
