@@ -1,4 +1,5 @@
 @echo off
+chcp 65001
 setlocal enabledelayedexpansion
 
 rem BAT script that creates the binaries for Carla (carla.org).
