@@ -65,6 +65,20 @@ if %REMOVE_INTERMEDIATE% == false (
     )
 )
 
+:: if exist UE4Editor.exe, kill it (otherwise it will cause link error with Unreal\CarlaUE4\Plugins\Carla\Binaries\Win64\UE4Editor-Carla.dll)
+:: echo wmic process where name="UE4Editor.exe" |find /i "%UE4_ROOT:/=\%\Engine\Binaries\Win64\UE4Editor.exe"
+:: wmic process where name="UE4Editor.exe" |find /i "%UE4_ROOT:/=\%\Engine\Binaries\Win64\UE4Editor.exe"
+:: There may be other unrelated UE4Editor.exe
+:: tasklist|find /i "UE4Editor.exe"
+:: UE4Editor.exe exist, %errorlevel% is 0
+if %errorlevel%==0 (
+    :: /F: forced termination
+    :: /IM: kill by IMage name
+    taskkill /F /IM UE4Editor.exe
+) else (
+    echo The UE4Editor.exe process does not exist in the background.
+)
+
 rem ============================================================================
 rem -- Local Variables ---------------------------------------------------------
 rem ============================================================================
@@ -78,7 +92,6 @@ if exist "%programfiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Bui
 ) else (
     if %GENERATOR% == "" set GENERATOR="Visual Studio 16 2019"
 )
-
 
 
 set LIBCARLA_SERVER_INSTALL_PATH=%ROOT_PATH:/=\%Unreal\CarlaUE4\Plugins\Carla\CarlaDependencies\
