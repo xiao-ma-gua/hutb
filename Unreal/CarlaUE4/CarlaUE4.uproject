@@ -150,7 +150,7 @@
 		},
 		{
 			"Name": "AirSim",
-			"Enabled": true
+			"Enabled": false
 		}
 	]
 }
