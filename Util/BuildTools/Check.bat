@@ -94,7 +94,7 @@ rem -- Launch Serve for test ---------------------------------------------------
 rem ============================================================================
 
 :: 获取CarlaUE4所在的目录（参考Package.bat）
-for /f %%i in ('git describe --tags --dirty --always') do set CARLA_VERSION=%%i
+for /f %%i in ('git rev-parse --short HEAD') do set CARLA_VERSION=%%i
 if not defined CARLA_VERSION goto bad_exit
 
 set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%/

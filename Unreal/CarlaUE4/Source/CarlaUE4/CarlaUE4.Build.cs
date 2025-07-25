@@ -54,6 +54,7 @@ public class CarlaUE4 : ModuleRules
         bool UseSRanipalPlugin = false;
         bool UseLogitechPlugin = true;
         bool UseFoveatedRender = false; // currently only supported in editor
+        bool UseAirSim = false;
         ////////////////////////////////////////////////////////////////////////////////////
 
         if (!IsWindows(Target))
@@ -79,6 +80,11 @@ public class CarlaUE4 : ModuleRules
         if (UseLogitechPlugin)
         {
             PrivateDependencyModuleNames.AddRange(new string[] { "LogitechWheelPlugin" });
+        }
+
+        if (UseAirSim)
+        {
+            PrivateDependencyModuleNames.AddRange(new string[] { "AirSim" });
         }
 
         if (UseFoveatedRender)

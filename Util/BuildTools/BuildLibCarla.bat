@@ -17,6 +17,7 @@ rem ============================================================================
 set DOC_STRING=Build LibCarla.
 set USAGE_STRING=Usage: %FILE_N% [-h^|--help] [--rebuild] [--server] [--client] [--clean]
 
+set GENERATOR=""
 set REMOVE_INTERMEDIATE=false
 set BUILD_SERVER=false
 set BUILD_CLIENT=false
@@ -64,6 +65,11 @@ if %REMOVE_INTERMEDIATE% == false (
     )
 )
 
+:: if exist UE4Editor.exe, kill it (otherwise it will cause link error with Unreal\CarlaUE4\Plugins\Carla\Binaries\Win64\UE4Editor-Carla.dll)
+:: There may be other unrelated UE4Editor.exe
+:: wmic process where name="UE4Editor.exe" |find /i "%UE4_ROOT:/=\%\Engine\Binaries\Win64\UE4Editor.exe"
+wmic process where name="UE4Editor.exe" delete
+
 rem ============================================================================
 rem -- Local Variables ---------------------------------------------------------
 rem ============================================================================
@@ -77,7 +83,6 @@ if exist "%programfiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Bui
 ) else (
     if %GENERATOR% == "" set GENERATOR="Visual Studio 16 2019"
 )
-
 
 
 set LIBCARLA_SERVER_INSTALL_PATH=%ROOT_PATH:/=\%Unreal\CarlaUE4\Plugins\Carla\CarlaDependencies\
