@@ -8,6 +8,10 @@ export ROOT_PATH=$(CURDIR)/
 # dependecy install/build directory (rpclib, gtest, boost)
 export INSTALLATION_DIR=$(ROOT_PATH)Build/
 
+export BOOST_VERSION=1.84.0
+export BOOST_INSTALL_FOLDER=${INSTALLATION_DIR}boost-${BOOST_VERSION}-install/
+export BOOST_SOURCE_FOLDER=${INSTALLATION_DIR}boost-${BOOST_VERSION}-source/
+
 # Cache package directory
 export CACHE_DIR=C:/jenkins/
 
@@ -79,7 +83,7 @@ benchmark: LibCarla
 
 .PHONY: PythonAPI
 PythonAPI: LibCarla osm2odr
-	@"${CARLA_BUILD_TOOLS_FOLDER}/BuildPythonAPI.bat" --py3
+	@"${CARLA_BUILD_TOOLS_FOLDER}/BuildPythonAPI.bat" --py3 $(ARGS)
 
 server: setup
 	@"${CARLA_BUILD_TOOLS_FOLDER}/BuildLibCarla.bat" --server --generator "$(GENERATOR)"

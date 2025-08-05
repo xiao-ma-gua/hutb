@@ -25,7 +25,7 @@ rem -- Parse arguments ---------------------------------------------------------
 rem ============================================================================
 
 set GENERATOR=""
-set BOOST_VERSION=1.86.0
+set BOOST_VERSION=%BOOST_VERSION%
 set INSTALLERS_DIR=%ROOT_PATH:/=\%Util\InstallersWin\
 set VERSION_FILE=%ROOT_PATH:/=\%Util\ContentVersions.txt
 set Carla_ROOT_DIR=%ROOT_PATH:/=\%\
@@ -249,6 +249,12 @@ rem -- Download and install Boost ----------------------------------------------
 rem ============================================================================
 
 echo %FILE_N% Installing Boost...
+call "%INSTALLERS_DIR%install_boost.bat"^
+ --build-dir "%INSTALLATION_DIR%"^
+ --toolset %TOOLSET%^
+ --version %BOOST_VERSION%^
+ -j %NUMBER_OF_ASYNC_JOBS%^
+ --build-all true
 call "%INSTALLERS_DIR%install_boost.bat"^
  --build-dir "%INSTALLATION_DIR%"^
  --toolset %TOOLSET%^

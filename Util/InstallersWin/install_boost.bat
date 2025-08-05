@@ -7,6 +7,8 @@ rem boost build for CARLA (carla.org).
 set LOCAL_PATH=%~dp0
 set FILE_N=    -[%~n0]:
 
+set BUILD_ALL=false
+
 rem Print batch params (debug purpose)
 echo %FILE_N% [Batch params]: %*
 
@@ -34,6 +36,10 @@ if not "%1"=="" (
     )
     if "%1"=="-v" (
         set BOOST_VERSION=%~2
+        shift
+    )
+    if "%1"=="--build-all" (
+        set BUILD_ALL=%~2
         shift
     )
     if "%1"=="-h" (
@@ -93,7 +99,9 @@ set _checksum=""
 
 if not exist "%BOOST_SRC_DIR%" (
     if exist "%CACHE_DIR:/=\%Installation.zip" (
-        powershell -Command "Expand-Archive '%CACHE_DIR:/=\%Installation.zip' -DestinationPath '%ROOT_PATH%'" -Force
+        if not exist "%BOOST_TEMP_FILE_DIR%" (
+            "%ProgramW6432%/7-Zip/7z.exe" x "%CACHE_DIR:/=\%Installation.zip" -o"%ROOT_PATH%" -y
+        )
     )
 
     if not exist "%BOOST_TEMP_FILE_DIR%" (
@@ -114,7 +122,7 @@ if not exist "%BOOST_SRC_DIR%" (
         powershell -Command "Expand-Archive '%BOOST_TEMP_FILE_DIR%' -DestinationPath '%BUILD_DIR%' -Force"
     )
     echo %FILE_N% Removing "%BOOST_TEMP_FILE%"
-    del "%BOOST_TEMP_FILE_DIR%"
+    rem del "%BOOST_TEMP_FILE_DIR%"
     rename "%BUILD_DIR%%BOOST_TEMP_FOLDER%" "%BOOST_BASENAME%-source"
 ) else (
     echo %FILE_N% Not downloading boost because already exists the folder "%BOOST_SRC_DIR%".
@@ -137,6 +145,21 @@ rem echo %FILE_N% Packing headers...
 rem b2 headers link=static
 
 echo %FILE_N% Building...
+if %BUILD_ALL%==true (
+    echo Build all...
+    b2 address-model=64 architecture=x86
+    rem Delete boost source directory, and build again, https://zhuanlan.zhihu.com/p/666616256
+    del /f /s /q %BOOST_SRC_DIR:/=\%\* >nul
+    rem Go back to the previous directory for delete source directory without locking
+    cd ..
+    rd /s /q %BOOST_SRC_DIR:/=\% >nul
+    goto eof
+)
+
+where python
+echo Install boost...
+cd "%BOOST_SRC_DIR%"
+
 b2 -j%NUMBER_OF_ASYNC_JOBS%^
     headers^
     --layout=versioned^
@@ -160,6 +183,7 @@ if %errorlevel% neq 0 goto error_install
 
 for /d %%i in ("%BOOST_INSTALL_DIR%boost*") do rename "%%i" include
 goto success
+
 
 rem ============================================================================
 rem -- Messages and Errors -----------------------------------------------------

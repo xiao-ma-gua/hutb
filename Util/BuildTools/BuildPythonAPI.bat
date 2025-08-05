@@ -108,12 +108,44 @@ if %BUILD_FOR_PYTHON2%==true (
 rem Build for Python 3
 rem
 if %BUILD_FOR_PYTHON3%==true (
-    echo Building Python API for Python 3.
-    python setup.py bdist_egg bdist_wheel
-    echo errorlevel: %errorlevel%
-    if not exist "%PYTHON_LIB_PATH%dist\" (
-        goto error_build_wheel
+    where conda >nul 2>&1
+    if %errorlevel%==0 (
+        echo Conda is already installed.
+    ) else (
+        echo TODO: Installing anaconda with silent mode
     )
+
+    for /l %%i in (13,-1,7) do (
+        rem remove boost build before
+        echo BOOST_VERSION: %BOOST_VERSION%
+        echo BOOST_INSTALL_FOLDER: %BOOST_INSTALL_FOLDER%
+        if exist "%BOOST_INSTALL_FOLDER%" (
+            echo Delete all boost files: %BOOST_INSTALL_FOLDER:/=\%*
+            del /f /s /q %BOOST_INSTALL_FOLDER:/=\%*  >nul
+            rem remove empty directory
+            rd /s /q %BOOST_INSTALL_FOLDER:/=\%  >nul
+            echo Delete boost source code: %BOOST_SOURCE_FOLDER:/=\%*
+            del /f /s /q %BOOST_SOURCE_FOLDER:/=\%*  >nul
+            rd /s /q %BOOST_SOURCE_FOLDER:/=\%  >nul
+        )
+        
+        cd "%ROOT_PATH%"
+        REM conda create --name hutb_3.%%i python=3.%%i --yes
+        call conda activate hutb_3.%%i
+        echo Current Python path: 
+        where python
+        make LibCarla
+        make osm2odr
+
+        cd "%PYTHON_LIB_PATH%"
+        echo Building Python API Python 3.%%i
+        python setup.py bdist_egg bdist_wheel
+        echo errorlevel: %errorlevel%
+        if not exist "%PYTHON_LIB_PATH%dist\" (
+            goto error_build_wheel
+        )
+    )
+
     :: Even if no .whl file is generated, errorlevel will be equal to 0
     :: if %errorlevel% neq 0 goto error_build_wheel
 )
