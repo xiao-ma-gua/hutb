@@ -9,6 +9,7 @@ export ROOT_PATH=$(CURDIR)/
 export INSTALLATION_DIR=$(ROOT_PATH)Build/
 
 export BOOST_VERSION=1.86.0
+export API_VERSION=2.9.16
 export BOOST_INSTALL_FOLDER=${INSTALLATION_DIR}boost-${BOOST_VERSION}-install/
 export BOOST_SOURCE_FOLDER=${INSTALLATION_DIR}boost-${BOOST_VERSION}-source/
 
@@ -71,7 +72,7 @@ check:
 
 # 仅用于调试
 # check.PythonAPI:
-check.PythonAPI: PythonAPI
+check.PythonAPI:
 	@"${CARLA_BUILD_TOOLS_FOLDER}/Check.bat" --python-api
 
 # somke testc
