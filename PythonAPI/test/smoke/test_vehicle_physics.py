@@ -109,7 +109,8 @@ class TestApplyVehiclePhysics(SyncSmokeTest):
             self.world.tick()
 
     def check_single_physics_control(self, bp_vehicle):
-        veh_tranf = self.world.get_map().get_spawn_points()[0]
+        spawn_points = self.world.get_map().get_spawn_points()
+        veh_tranf = spawn_points[len(spawn_points)-1]
 
         vehicle = self.world.spawn_actor(bp_vehicle, veh_tranf)
 
@@ -143,7 +144,7 @@ class TestApplyVehiclePhysics(SyncSmokeTest):
         pc_a = []
         pc_b = []
         for i in range(0, num_veh):
-            veh_tranf = self.world.get_map().get_spawn_points()[i]
+            veh_tranf = self.world.get_map().get_spawn_points()[i+1]
             bp_vehicle = bp_vehicles[index_bp] if index_bp is not None else bp_vehicles[i]
             vehicles.append(self.world.spawn_actor(bp_vehicle, veh_tranf))
             drag_coeff = 3.0 + 0.1*i
