@@ -1,7 +1,10 @@
 name: hutb Windows CI/CD
 
-on:
+on: 
   push:
+  pull_request:
+    branches:
+      - hutb
 
 
 jobs:
