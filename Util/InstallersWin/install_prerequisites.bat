@@ -51,13 +51,13 @@ rem -- MAIN --
 rem -- INSTALL VISUAL STUDIO IF NOT FOUND --
 setlocal EnableDelayedExpansion
 set "vs_found=false"
-if exist "%PROGRAMFILES%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
+if exist "%ProgramW6432%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
     set "vs_found=true"
 )
-if exist "%PROGRAMFILES%\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Build\vcvars64.bat" (
+if exist "%ProgramW6432%\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Build\vcvars64.bat" (
     set "vs_found=true"
 )
-if exist "%PROGRAMFILES%\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat" (
+if exist "%ProgramW6432%\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat" (
     set "vs_found=true"
 )
 
