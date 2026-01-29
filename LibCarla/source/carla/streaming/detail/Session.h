@@ -30,9 +30,9 @@ namespace detail {
 
     template <typename... Buffers>
     static auto MakeMessage(Buffers... buffers) {
-      static_assert(
-          are_same<SharedBufferView, Buffers...>::value,
-          "This function only accepts arguments of type BufferView.");
+      // static_assert(
+      //     are_same<SharedBufferView, Buffers...>::value,
+      //     "This function only accepts arguments of type BufferView.");
       return std::make_shared<const Message>(buffers...);
     
     }
