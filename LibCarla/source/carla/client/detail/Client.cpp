@@ -381,7 +381,7 @@ namespace detail {
       if (attachment_type == rpc::AttachmentType::SpringArm ||
           attachment_type == rpc::AttachmentType::SpringArmGhost)
       {
-        const auto a = transform.location.MakeSafeUnitVector(std::numeric_limits<float>::epsilon());
+        const auto a = transform.location.MakeUnitVector(std::numeric_limits<float>::epsilon());
         const auto z = geom::Vector3D(0.0f, 0.f, 1.0f);
         constexpr float OneEps = 1.0f - std::numeric_limits<float>::epsilon();
         if (geom::Math::Dot(a, z) > OneEps) {
@@ -457,6 +457,10 @@ namespace detail {
 
   geom::BoundingBox Client::GetActorBoundingBox(rpc::ActorId actor) {
     return _pimpl->CallAndWait<geom::BoundingBox>("get_actor_bounding_box", actor);
+  }
+
+  geom::BoundingBox Client::GetTrafficSignTriggerVolume(rpc::ActorId actor) {
+    return _pimpl->CallAndWait<geom::BoundingBox>("get_traffic_sign_trigger_volume", actor);
   }
 
   geom::Transform Client::GetActorComponentWorldTransform(rpc::ActorId actor, const std::string componentName) {

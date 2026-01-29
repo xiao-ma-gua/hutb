@@ -1256,7 +1256,7 @@ BIND_SYNC(is_sensor_enabled_for_ros) << [this](carla::streaming::detail::stream_
         CarlaActor->SetWalkerState(
             Transform,
             cr::WalkerControl(
-              Transform.GetForwardVector(), Speed, false));
+              Transform.GetForwardVector(), Speed, false, float(Episode->GetElapsedGameTime())));
     if (Response != ECarlaServerResponse::Success)
     {
       return RespondError(
@@ -1548,6 +1548,18 @@ BIND_SYNC(is_sensor_enabled_for_ros) << [this](carla::streaming::detail::stream_
     FBoundingBox bounding_box = UBoundingBoxCalculator::GetActorBoundingBox(CarlaActor->GetActor(), 0);
     bounding_box.ActorId = CarlaActor->GetActorId();
     return cr::BoundingBox(bounding_box);
+  };
+
+  BIND_SYNC(get_traffic_sign_trigger_volume) << [this](
+      cr::ActorId ActorId) -> R<cr::BoundingBox>
+  {
+    REQUIRE_CARLA_EPISODE();
+    FCarlaActor* CarlaActor = Episode->FindCarlaActor(ActorId);
+    if (!CarlaActor)
+      return cr::BoundingBox();
+    FBoundingBox trigger_volume = UBoundingBoxCalculator::GetTrafficSignTriggerVolume(CarlaActor->GetActor());
+    trigger_volume.ActorId = CarlaActor->GetActorId();
+    return cr::BoundingBox(trigger_volume);
   };
 
   BIND_SYNC(get_actor_component_world_transform) << [this](
