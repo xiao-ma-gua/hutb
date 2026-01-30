@@ -2,8 +2,8 @@
  * Change foonathan memory vendor branch to v1.3.1.
  * Improved the way the TrafficManager controls large vehicles at junctions, reducing the frequency of collisions with other elements in the simulation.
  * Improved the turning behavior of vehicles controlled by the TrafficManager, making them smoother.
-* Added a hybrid solid-state LiDAR with adjustable parameters (blueprint attributes)
-* Fix OpenDrive Builder lane width
+ * Added a hybrid solid-state LiDAR with adjustable parameters (blueprint attributes)
+ * Fix OpenDrive Builder lane width
  * Introduced geom::AngularVelocity, geom::Velocity, geom::Acceleration, geom::Quaternion types
  * Fixed geom::Rotation::RotateVector() rotation directions of pitch and roll
  * Prepare server for multistream support and ROS2 client calls
@@ -13,6 +13,7 @@
  * Fixed issue with disabled environment objects (ISMs) appearing in segmentation and depth images.
  * Added support for parsing offsets from OpenDRIVE using optional offset transforms.
  * Added ad-rss type-stubs for the PythonAPI when building with RSS support
+
 
 ## CARLA 0.9.16
 
