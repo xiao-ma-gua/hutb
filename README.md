@@ -1,15 +1,15 @@
 # 人车模拟器
 
-该项目是一个用于研究[具身人](https://openhutb.github.io/doc/#_5)、[无人车](https://openhutb.github.io/doc/#_4)、[无人机](https://openhutb.github.io/air_doc/)的高保真开源模拟器。
+该项目是一个用于研究[具身人](https://openhutb.github.io/doc/#_5)、[无人车](https://openhutb.github.io/doc/#_4)、[无人机](https://openhutb.github.io/air_doc/)的影视级物理模拟器。
 基于 [Carla-DReyeVR](https://openhutb.github.io/doc/interbehavior/) 和 [OpenSim](https://openhutb.github.io/doc/pedestrian/tuto_content_chrono_opensim/) 开发，旨在支持人车系统的开发、训练和验证。
 除了开源代码外，还提供了为此目的创建的可自由使用的开放数字资产（[城镇布局](https://openhutb.github.io/doc/core_map/#non-layered-maps) 、[建筑](https://openhutb.github.io/doc/catalogue/) 、[车辆](https://openhutb.github.io/doc/catalogue_vehicles/) 、[行人](https://openhutb.github.io/doc/catalogue_pedestrians/) 、[道具](https://openhutb.github.io/doc/catalogue_props/) 等）。
 该模拟平台支持 [传感器](https://openhutb.github.io/doc/ref_sensors/) 、[数据合成](https://openhutb.github.io/doc/tuto_G_retrieve_data/) 、[交通管理器](https://openhutb.github.io/doc/adv_traffic_manager/) 、[多物理场仿真](https://openhutb.github.io/doc/tuto_G_chrono/) 、[行人导航](https://openhutb.github.io/doc/tuto_G_pedestrian_navigation/) 、[Python接口](https://openhutb.github.io/doc/python_api/) 等的标准规范。
-详细介绍请参考 [模拟器文档](https://openhutb.github.io) 。
+详细介绍请参考 [人车孪创文档](https://openhutb.github.io) 。
 
 
 ## 使用示例
-1. 使用并执行 [模拟器下载工具](https://gitee.com/OpenHUTB/sw/releases/download/up/hutb_downloader.exe) ，然后双击生成的 hutb 目录下的可执行文件；
-2. 使用`pip install PythonAPI/carla/dist/hutb-*.whl`安装特定 Python 版本的工具包，运行以下脚本在场景中 [生成车辆和行人](https://github.com/OpenHUTB/doc/blob/master/src/examples/generate_traffic.py) ：
+1. 下载并执行 [模拟器下载工具](https://gitee.com/OpenHUTB/sw/releases/download/up/hutb_downloader.exe) ；
+2. 进入生成的目录`hutb/PythonAPI/carla/dist/`，使用`pip install hutb-*.whl`安装特定 Python 版本的工具包（支持Python 3.7-3.14），运行以下脚本在场景中 [生成车辆和行人](https://github.com/OpenHUTB/doc/blob/master/src/examples/generate_traffic.py) ：
 	```shell
 	python PythonAPI/examples/generate_traffic.py
 	```
@@ -50,6 +50,7 @@
 
 * [**相关应用**](https://openhutb.github.io/doc/used_by/): 包括 [感知](https://openhutb.github.io/doc/used_by/#perception) 、[规划](https://openhutb.github.io/doc/used_by/#planning) 、[控制](https://openhutb.github.io/doc/used_by/#control) 、[端到端](https://openhutb.github.io/doc/used_by/#end_2_end) 、[大模型](https://openhutb.github.io/doc/used_by/#llm) 、[行人](https://openhutb.github.io/doc/used_by/#pedestrian) 、[智能体](https://openhutb.github.io/doc/used_by/#agent) 、[可解释](https://openhutb.github.io/doc/used_by/#explainability) 等
 * [**自动驾驶排行榜**](https://leaderboard.carla.org/): 用于验证自动驾驶技术栈的自动平台
+* [**Nvidia 生态**](https://openhutb.github.io/doc/nvidia/): [SimReady](https://openhutb.github.io/doc/nvidia_simready/) 、[神经渲染](https://openhutb.github.io/doc/nvidia_nurec/) 、[Cosmos 世界基础模型](https://openhutb.github.io/doc/nvidia_cosmos_transfer/) 等
 * [**Scenario_Runner**](https://github.com/carla-simulator/scenario_runner): Carla 0.9.X中执行交通场景的引擎
 * [**ROS-bridge**](https://github.com/carla-simulator/ros-bridge): Carla 0.9.X和ROS的接口
 * [**驾驶基准**](https://github.com/carla-simulator/driving-benchmarks): 用于自动驾驶任务的基准工具
