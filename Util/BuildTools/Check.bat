@@ -38,6 +38,7 @@ rem ============================================================================
 set DOC_STRING="Run unit tests."
 set USAGE_STRING="Usage: %FILE_N% [-h|--help] [--gdb] [--xml] [--gtest_args=ARGS] [--python-version=VERSION]"
 
+
 set XML_OUTPUT=false
 set LIBCARLA_RELEASE=false
 set LIBCARLA_DEBUG=false
@@ -45,9 +46,15 @@ set SMOKE_TESTS=false
 set PYTHON_API=false
 set RUN_BENCHMARK=false
 set MEASURE_TIME=true
-set python_dir=C:\software\anaconda3\envs\carla_dev\
+set UPLOAD_DOWNLOAD=false
+
+rem set home_dir=%LOCAL_PATH%..\..\
+rem 相对路径转换为完整的绝对路径
+rem for %%i in ("%home_dir%") do set home_dir=%%~fi
+set python_dir=%ROOT_PATH%Build\dependencies\prerequisites\miniconda3\envs\hutb_3.8\
 set python_path=%python_dir%python.exe
 set pip_path=%python_dir%Scripts\pip.exe
+echo python_path: %python_path%
 
 :arg-parse
 if not "%1"=="" (
@@ -56,6 +63,12 @@ if not "%1"=="" (
         set LIBCARLA_RELEASE=true
         set LIBCARLA_DEBUG=true
         set PYTHON_API=true
+        set UPLOAD_DOWNLOAD=true
+    )
+
+    if "%1"=="--upload" (
+        set UPLOAD_DOWNLOAD=true
+        shift
     )
 
     if "%1"=="--xml" (
@@ -104,10 +117,31 @@ if exist %INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%-dirty/ (
     set CARLA_VERSION=%CARLA_VERSION%-dirty
 )
 
+if %UPLOAD_DOWNLOAD%==true (
+    cd /d %ROOT_PATH%Util
+    rem  --distpath %INSTALLATION_DIR%UE4Carla
+    rem %pip_path% install Pyinstaller
+    %python_dir%Scripts\pyinstaller.exe hutb_downloader.spec
+
+    rem %pip_path% install gitpython
+    rem 将编译好的包上传到远程服务器并下载编译好的包
+    rem python %ROOT_PATH%Util\download_from_git.py -u release
+    cd %ROOT_PATH%Util\dist\
+    hutb_downloader.exe  -u release
+    rem 测试下载发行包
+    hutb_downloader.exe
+    cd /d %ROOT_PATH%
+) else (
+    echo Skipping upload and download of package for version %CARLA_VERSION%.
+)
+
+
+
+rem The directory of CarlaUE4.exe
 set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%/
 :: debug only (rename with no dirty)
 if %IS_DEBUG%==true (
-    set BUILD_FOLDER=D:\hutb\Build\UE4Carla\e392521d5-dirty_Carla\
+    set BUILD_FOLDER=D:\hutb\Build\UE4Carla\debug\
 )
 
 set exe_path=%BUILD_FOLDER:/=\%WindowsNoEditor\CarlaUE4.exe
