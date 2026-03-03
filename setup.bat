@@ -7,6 +7,7 @@ set FILE_N=-[%~n0]:
 
 set skip_prerequisites=false
 set launch=false
+set package=false
 set interactive=false
 set python_path=python
 set python_root=
@@ -52,8 +53,12 @@ rem -- PARSE COMMAND LINE ARGUMENTS --
         set interactive=true
     ) else if "%1"=="--skip-prerequisites" (
         set skip_prerequisites=true
-    ) else if "%1"=="-p" (
+    ) else if "%1"=="-s" (
         set skip_prerequisites=true
+    ) else if "%1"=="--package" (
+        set package=true
+    ) else if "%1"=="-p" (
+        set package=true
     ) else if "%1"=="--launch" (
         set launch=true
     ) else if "%1"=="-l" (
@@ -89,16 +94,20 @@ rem ============================================================================
 if not exist "%cd%\Build" (
     mkdir "%cd%\Build"
 ) else (
-    if not exist "%cd%\Build\git" (
-        if not exist "%cd%\Build\git.zip" (
-            echo Downloading git.zip ...
-            pushd "%cd%\Build"
-            curl -L -o git.zip https://gitee.com/OpenHUTB/sw/releases/download/up/git.zip || exit /b
-            popd
-        )
-        echo Unzipping git...
-        powershell -Command "Expand-Archive -Path '%cd%\Build\git.zip' -DestinationPath '%cd%\Build\' -Force" || exit /b
+    echo "%cd%\Build" folder already exists.
+)
+
+if not exist "%cd%\Build\git" (
+    if not exist "%cd%\Build\git.zip" (
+        echo Downloading git.zip ...
+        pushd "%cd%\Build"
+        curl -L -o git.zip https://gitee.com/OpenHUTB/sw/releases/download/up/git.zip || exit /b
+        popd
     )
+    echo Unzipping git...
+    powershell -Command "Expand-Archive -Path '%cd%\Build\git.zip' -DestinationPath '%cd%\Build\' -Force" || exit /b
+) else (
+    echo "%cd%\Build\git" folder already exists.
 )
 
 :: clone prerequisites https://git.code.tencent.com/OpenHUTB/dependencies to Build\prerequisites
@@ -130,6 +139,29 @@ if exist "%cd%\Build\dependencies\" (
         echo 7zip folder already exists.
     )
 
+
+    rem ---------------------------------------------------------------------------------------------------------------
+    rem Unzip Plugins
+    rem ---------------------------------------------------------------------------------------------------------------
+    rem Unzip RoadRunner Plugins
+    if not exist "%cd%\Unreal\CarlaUE4\Plugins\RoadRunnerRuntime" (
+        echo Unzipping Roadrunner Plugins ...
+        "prerequisites\7zip\7z.exe" x "Plugins\RoadRunner_Plugins.zip" -o"%cd%\Unreal\CarlaUE4\Plugins\" -y >nul
+    ) else (
+        echo RoadRunner Plugins already exists.
+    )
+    rem Unzip CesiumForUnreal Plugin
+    if not exist "%cd%\Unreal\CarlaUE4\Plugins\CesiumForUnreal" (
+        echo Unzipping CesiumForUnreal Plugin ...
+        "prerequisites\7zip\7z.exe" x "Plugins\CesiumForUnreal-426-v1.18.0-ue4.zip" -o"%cd%\Unreal\CarlaUE4\Plugins\" -y >nul
+    ) else (
+        echo CesiumForUnreal Plugin already exists.
+    )
+
+
+    rem ---------------------------------------------------------------------------------------------------------------
+    rem Unzip dependencies
+    rem ---------------------------------------------------------------------------------------------------------------
     rem fix no XINPUT1_3.dll error when lanunch UE4Editor
     rem install directx_Jun2010_redist.exe when DirectX folder not exist
     REG QUERY HKEY_CURRENT_USER\Software\Microsoft |find "DirectX" >nul
@@ -179,6 +211,12 @@ if exist "%cd%\Build\dependencies\" (
         "prerequisites\7zip\7z.exe" x "prerequisites\dotnet.zip" -o"prerequisites\" -y >nul
     ) else (
         echo dotnet folder already exists.
+    )
+    if not exist "prerequisites\git\" (
+        echo Unzipping git ...
+        "prerequisites\7zip\7z.exe" x "prerequisites\git.zip" -o"prerequisites\" -y >nul
+    ) else (
+        echo git folder already exists.
     )
     if not exist "prerequisites\GnuWin32\" (
         echo Unzipping GnuWin32 ...
@@ -295,6 +333,18 @@ if %skip_prerequisites%==false (
 
 rem Activate VS terminal development environment:
 set "vs_env_bat="
+rem for vs 2019
+if exist "%programfiles(x86)%\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat" (
+    set "vs_env_bat=%programfiles(x86)%\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
+)
+if exist "%programfiles(x86)%\Microsoft Visual Studio\2019\Professional\VC\Auxiliary\Build\vcvars64.bat" (
+    set "vs_env_bat=%programfiles(x86)%\Microsoft Visual Studio\2019\Professional\VC\Auxiliary\Build\vcvars64.bat"
+)
+if exist "%programfiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat" (
+    set "vs_env_bat=%programfiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+)
+
+rem for vs 2022
 if exist "%ProgramW6432%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
     set "vs_env_bat=%ProgramW6432%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
 )
@@ -309,7 +359,7 @@ if not "%vs_env_bat%"=="" (
     echo Activating "x64 Native Tools Command Prompt" terminal environment.
     call "%vs_env_bat%" || exit /b
 ) else (
-    echo Could not find vcvars64.bat for VS 2022, aborting setup...
+    echo Could not find vcvars64.bat for VS, aborting setup...
     exit 1
 )
 
@@ -319,9 +369,14 @@ rem make PythonAPI ARGS="--chrono" >python.log
 
 rem call %cd%\Build\dependencies\prerequisites\GnuWin32\bin\make launch ARGS="--chrono"
 
-rem make launch ARGS="--chrono" >launch.log
-
-rem make package ARGS="--chrono" >package.log
+if %launch% == true (
+    echo Launching Unreal Editor, log to launch.log...
+    make launch ARGS="--chrono" >launch.log
+)
+if %package% == true (
+    echo Packaging HUTB, log to package.log...
+    make package ARGS="--chrono" >package.log
+)
 
 
 
