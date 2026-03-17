@@ -31,7 +31,7 @@ foreach(dir ""
 
 endforeach()
 
-# Install boost headers and libraries.
+# Install boost headers and libraries. Prevent printed message too long.
 install(DIRECTORY "${BOOST_INCLUDE_PATH}/boost" DESTINATION include)
 
 if(WIN32)
