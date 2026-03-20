@@ -12,8 +12,15 @@
 # 2. python git_files.py 生成git_files.txt文件，复制其中的内容到Util\hutb_downloader.spec文件的Analysis对象的datas参数中，
 # 将git目录添加到datas参数中，换一台机器还是找不到git，转而从gitee下载git_min.zip，并解压到当前目录下，这样就可以避免在打包成exe后，找不到git可执行文件的问题
 # 3. Pyinstaller download_from_git.py --onefile --name hutb_downloader -i hutb_log.ico
+# 
 #
-#
+# 新机器问题：fatal: unable to access 'https://git.code.tencent.com/OpenHUTB/release.git/': error setting certificate verify locations: CAfile: E:/Projects/OpenHUTB-mcp/mcp/git/mingw64/ssl/certs/ca-bundle.crt/etc/ssl/certs/ca-bundle.crt CApath: none
+# 解决：git\bin\git.exe config --global http.sslVerify false
+# 
+# 解决：没有拉取大文件：
+# 解决：git\bin\git.exe lfs install
+# 
+# 
 # 其他（开发过程）：
 # 使用.spec文件打包：Pyinstaller hutb_downloader.spec
 # -i "icon.ico"  指定图标
@@ -26,6 +33,8 @@
 # 单个文件：
 # Pyinstaller download_from_git.py --onefile --add-data "git\bin\bash.exe;git\bin\" --add-data "git\bin\git.exe;git\bin\"  -i hutb_log.ico --name hutb_downloader
 #
+#
+# 
 # 上传到远程服务器：
 # python.exe download_from_git.py -u release
 
@@ -41,9 +50,6 @@ import subprocess
 import urllib.request
 import zipfile
 
-from git.repo import Repo
-from git.repo.fun import is_git_dir
-
 # 获取当前代码路径的上级目录
 home_dir = os.path.abspath(os.path.join(os.getcwd(), ".."))
 # 获取当前脚本所在的路径
@@ -57,16 +63,13 @@ script_dir = os.path.dirname(os.path.abspath(script_dir))
 # 使用当前 git 目录下的 git 可执行文件
 # 判断git目录是否存在
 prerequisites_dir = os.path.join(home_dir, "Build", "dependencies", "prerequisites")
-if os.path.exists(os.path.join(prerequisites_dir, "git")) and not os.path.exists(
-    os.path.join(script_dir, "git", "bin", "git.exe")
-):
+if os.path.exists(os.path.join(prerequisites_dir, "git")) and not os.path.exists(os.path.join(script_dir, "git", "bin", "git.exe")):
     # 将git目录拷贝到当前脚本所在的路径下
+    print("Copying git directory from prerequisites to current script directory...")
     shutil.copytree(
         os.path.join(prerequisites_dir, "git"), os.path.join(script_dir, "git")
     )
-elif not os.path.exists(os.path.join(prerequisites_dir, "git")) and not os.path.exists(
-    os.path.join(script_dir, "git", "bin", "git.exe")
-):
+elif not os.path.exists(os.path.join(prerequisites_dir, "git")) and not os.path.exists(os.path.join(script_dir, "git", "bin", "git.exe")):
     # 从gitee下载git_min.zip，并解压到当前目录下
     print(
         "Git directory not found in prerequisites, download it from https://gitee.com/OpenHUTB/sw/releases/download/up/git_min.zip and extract it to %s"
@@ -78,14 +81,23 @@ elif not os.path.exists(os.path.join(prerequisites_dir, "git")) and not os.path.
     )
     with zipfile.ZipFile(os.path.join(script_dir, "git_min.zip"), "r") as zip_ref:
         zip_ref.extractall(script_dir)
+else:
+    print("Git directory not found in prerequisites or current script directory.")
 
 
 # 这样可以避免在打包成exe后，找不到git可执行文件的问题
-git_path = os.path.join(script_dir, "git", "bin", "git.exe")
-print("Using git executable: ", git_path)
-os.environ["GIT_PYTHON_GIT_EXECUTABLE"] = git_path
+git_exe = os.path.join(script_dir, "git", "bin", "git.exe")
+print("Using git executable: ", git_exe)
+os.environ["GIT_PYTHON_GIT_EXECUTABLE"] = git_exe
 
-git_exe = os.environ.get("GIT_PYTHON_GIT_EXECUTABLE", "git")
+# 必须在设置GIT_PYTHON_GIT_EXECUTABLE环境变量之后，才能导入git库，否则git库会使用系统环境变量中默认的git路径，导致找不到git可执行文件的问题
+from git.repo import Repo
+from git.repo.fun import is_git_dir
+
+disable_ssl_verify_command = "%s config --global http.sslVerify false" % os.path.join(script_dir, 'git', 'bin', 'git.exe')
+print(disable_ssl_verify_command)
+os.system(disable_ssl_verify_command)  # 解决新机器上git拉取代码时，出现的证书验证问题
+
 
 
 def show_progress_bar(current, total, bar_length=40):
@@ -340,6 +352,7 @@ def remove_readonly(func, path, _):
 
 if __name__ == "__main__":
 
+
     argparser = argparse.ArgumentParser(description=__doc__)
     argparser.add_argument(
         "-r",
@@ -423,6 +436,15 @@ if __name__ == "__main__":
         # Remove previous download folder
         shutil.rmtree(local_path, onerror=remove_readonly)
     repo = GitRepository(local_path, remote_path)
+    # gitpython 库在新机器下载大文件时会出现问题，改为直接调用 git 命令行工具进行下载
+    # repo = GitRepository(local_path, remote_path)
+    # 问题：Skipping object checkout, Git LFS is not installed for this repository.
+    # 解决：git lfs install
+    # git_path = os.path.join(script_dir, 'git', 'bin', 'git.exe')
+    # clone_cmd = "%s clone %s  %s && cd %s & %s lfs install  && %s lfs pull && cd .." % (git_path, remote_path, local_path, save_dir, git_path, git_path)
+    # print("Cloning repository with command: ", clone_cmd)
+    # os.system(clone_cmd)
+
 
     # 移除工程中不相关的文件
     if os.path.exists(os.path.join(local_path, ".git")):
@@ -477,7 +499,11 @@ if __name__ == "__main__":
     cost_time = datetime.datetime.now() - start
     # 当网络带宽足够大时，下载时间大约4-5分钟左右
     print("Download finished, cost: %s" % (cost_time))
-    print("Download to: ", local_path)
+    print("Download path: ", local_path)
+    
+    print("Launch simulator to click the file: %s" % os.path.join(local_path, 'CarlaUE4.exe'))
+    print("Press any key to continue...")
+    input()
     # kill_process_on_port(2000)  # 下载完成后自动启动CarlaUE4.exe，方便用户查看下载结果
     # if os.path.exists( os.path.join(local_path, 'CarlaUE4.exe') ):
     #     os.system("start "" %s" % os.path.join(local_path, 'CarlaUE4.exe'))  # 启动CarlaUE4.exe

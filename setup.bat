@@ -175,6 +175,14 @@ if exist "%cd%\Build\dependencies\" (
         echo DirectX found!
     )
 
+    rem Unzip DirectX Runtime
+    if not exist "prerequisites\DirectX_Runtime" (
+        echo Unzipping DirectX Runtime ...
+        "prerequisites\7zip\7z.exe" x "prerequisites\DirectX_Runtime.zip" -o"prerequisites\" -y >nul
+    ) else (
+        echo DirectX Runtime already exists.
+    )
+
     if not exist "prerequisites\miniconda3\" (
         echo Unzipping miniconda...
         "prerequisites\7zip\7z.exe" x "prerequisites\miniconda3.zip" -o"prerequisites\" -y >nul
