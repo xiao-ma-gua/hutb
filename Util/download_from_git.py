@@ -423,10 +423,12 @@ if __name__ == "__main__":
 
     # 如果指定 -upload 参数（上传发行版），则 -r 参数无效
     # d:\hutb\Build\dependencies\prerequisites\miniconda3\envs\hutb\python.exe download_from_git.py -u release
-    if args.upload == "none":
+    if args.upload != "none":
         print("Upload to repository: %s" % args.upload)
         # 修改：后续所有的 remote_path 拼接不再使用写死的 args.repository，而是使用动态变量
         remote_path = f"https://OpenHUTB:T8w6TYB_r71gGTP3A02B@git.code.tencent.com/OpenHUTB/{upload_target}.git"
+        # 做测试使用
+        # remote_path = f"https://xiao-ma-gua:50yaJFQEIF1Qw97DjkB7@git.code.tencent.com/xiao-ma-gua/{upload_target}.git"
 
         # 配置不验证LFS锁
         subprocess.run([git_exe, "config", f"lfs.{remote_path}.locksverify", "false"], capture_output=True)
@@ -487,14 +489,18 @@ if __name__ == "__main__":
         sys.exit(0)
 
     # ================== 下载逻辑 ==================
-    print(f"Repository to download: {args.repo_target}")
+    print(f"Repository to download: {repo_target}")
     remote_path = f"https://OpenHUTB:T8w6TYB_r71gGTP3A02B@git.code.tencent.com/OpenHUTB/{repo_target}.git"
+    # 做测试使用
+    # remote_path = f"https://xiao-ma-gua:50yaJFQEIF1Qw97DjkB7@git.code.tencent.com/xiao-ma-gua/{repo_target}.git"
 
     # 在此处动态拼接下载链接，并配置 LFS 锁
     subprocess.run([git_exe, "config", f"lfs.{remote_path}.locksverify", "false"], capture_output=True)
 
     cur_dir = os.getcwd()
     if args.repository == "release":
+    # 做测试使用
+    # if args.repository in ["release", "test_release", "test_release_u"]:
         save_dir = "hutb"
     else:
         save_dir = args.repository
@@ -586,3 +592,4 @@ if __name__ == "__main__":
     # if os.path.exists( os.path.join(local_path, 'CarlaUE4.exe') ):
     #     os.system("start "" %s" % os.path.join(local_path, 'CarlaUE4.exe'))  # 启动CarlaUE4.exe
     # time.sleep(15)  # 延时15秒，方便查看命令行输出
+
