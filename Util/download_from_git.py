@@ -67,6 +67,9 @@ import zipfile
 # 全局取消证书验证
 ssl._create_default_https_context = ssl._create_unverified_context
 
+# 环境判断
+IS_WINDOWS = sys.platform.startswith('win')
+IS_LINUX = sys.platform.startswith('linux')
 
 # 获取当前代码路径的上级目录
 home_dir = os.path.abspath(os.path.join(os.getcwd(), ".."))
@@ -80,31 +83,40 @@ script_dir = os.path.dirname(os.path.abspath(script_dir))
 
 # 使用当前 git 目录下的 git 可执行文件
 # 判断git目录是否存在
-prerequisites_dir = os.path.join(home_dir, "Build", "dependencies", "prerequisites")
-if os.path.exists(os.path.join(prerequisites_dir, "git")) and not os.path.exists(os.path.join(script_dir, "git", "bin", "git.exe")):
-    # 将git目录拷贝到当前脚本所在的路径下
-    print("Copying git directory from prerequisites to current script directory...")
-    shutil.copytree(
-        os.path.join(prerequisites_dir, "git"), os.path.join(script_dir, "git")
-    )
-elif not os.path.exists(os.path.join(prerequisites_dir, "git")) and not os.path.exists(os.path.join(script_dir, "git", "bin", "git.exe")):
-    # 从gitee下载git_min.zip，并解压到当前目录下
-    print(
-        "Git directory not found in prerequisites, download it from https://gitee.com/OpenHUTB/sw/releases/download/up/git_min.zip and extract it to %s"
-        % script_dir
-    )
-    urllib.request.urlretrieve(
-        "https://gitee.com/OpenHUTB/sw/releases/download/up/git_min.zip",
-        os.path.join(script_dir, "git_min.zip"),
-    )
-    with zipfile.ZipFile(os.path.join(script_dir, "git_min.zip"), "r") as zip_ref:
-        zip_ref.extractall(script_dir)
+if IS_WINDOWS:
+    # Windows 环境：使用本地自带或下载的 Git
+    prerequisites_dir = os.path.join(home_dir, "Build", "dependencies", "prerequisites")
+    if os.path.exists(os.path.join(prerequisites_dir, "git")) and not os.path.exists(os.path.join(script_dir, "git", "bin", "git.exe")):
+        # 将git目录拷贝到当前脚本所在的路径下
+        print("Copying git directory from prerequisites to current script directory...")
+        shutil.copytree(
+            os.path.join(prerequisites_dir, "git"), os.path.join(script_dir, "git")
+        )
+    elif not os.path.exists(os.path.join(prerequisites_dir, "git")) and not os.path.exists(os.path.join(script_dir, "git", "bin", "git.exe")):
+        # 从gitee下载git_min.zip，并解压到当前目录下
+        print(
+            "Git directory not found in prerequisites, download it from https://gitee.com/OpenHUTB/sw/releases/download/up/git_min.zip and extract it to %s"
+            % script_dir
+        )
+        urllib.request.urlretrieve(
+            "https://gitee.com/OpenHUTB/sw/releases/download/up/git_min.zip",
+            os.path.join(script_dir, "git_min.zip"),
+        )
+        with zipfile.ZipFile(os.path.join(script_dir, "git_min.zip"), "r") as zip_ref:
+            zip_ref.extractall(script_dir)
+    else:
+        print("Git directory not found in prerequisites or current script directory.")
+
+    # 这样可以避免在打包成exe后，找不到git可执行文件的问题
+    git_exe = os.path.join(script_dir, "git", "bin", "git.exe")
+
 else:
-    print("Git directory not found in prerequisites or current script directory.")
+    # Ubuntu/Linux 环境：使用系统自带的 Git
+    git_exe = shutil.which("git")
+    if not git_exe:
+        print("Error: Git not found. Please install git and git-lfs (e.g., sudo apt-get install git git-lfs)")
+        sys.exit(1)
 
-
-# 这样可以避免在打包成exe后，找不到git可执行文件的问题
-git_exe = os.path.join(script_dir, "git", "bin", "git.exe")
 print("Using git executable: ", git_exe)
 os.environ["GIT_PYTHON_GIT_EXECUTABLE"] = git_exe
 
@@ -112,16 +124,19 @@ os.environ["GIT_PYTHON_GIT_EXECUTABLE"] = git_exe
 from git.repo import Repo
 from git.repo.fun import is_git_dir
 
-disable_ssl_verify_command = "%s config --global http.sslVerify false" % os.path.join(script_dir, 'git', 'bin', 'git.exe')
-print(disable_ssl_verify_command)
-os.system(disable_ssl_verify_command)  # 解决新机器上git拉取代码时，出现的证书验证问题
+# disable_ssl_verify_command = "%s config --global http.sslVerify false" % os.path.join(script_dir, 'git', 'bin', 'git.exe')
+# print(disable_ssl_verify_command)
+# os.system(disable_ssl_verify_command)  # 解决新机器上git拉取代码时，出现的证书验证问题
 
-# 将本地的 Git 配置设置为不验证远程仓库的 LFS 锁定状态，
-# 解决 git lfs push -f 报错：
-# stdout: 'Locking support detected on remote "origin". Consider enabling it with: git config lfs.https://git.code.tencent.com/OpenHUTB/release.git.locksverify false'
-disable_lfs_lock_verify_command = "%s config lfs.https://git.code.tencent.com/OpenHUTB/release.git.locksverify false" % os.path.join(script_dir, 'git', 'bin', 'git.exe')
-print(disable_lfs_lock_verify_command)
-os.system(disable_lfs_lock_verify_command)
+# # 将本地的 Git 配置设置为不验证远程仓库的 LFS 锁定状态，
+# # 解决 git lfs push -f 报错：
+# # stdout: 'Locking support detected on remote "origin". Consider enabling it with: git config lfs.https://git.code.tencent.com/OpenHUTB/release.git.locksverify false'
+# disable_lfs_lock_verify_command = "%s config lfs.https://git.code.tencent.com/OpenHUTB/release.git.locksverify false" % os.path.join(script_dir, 'git', 'bin', 'git.exe')
+# print(disable_lfs_lock_verify_command)
+# os.system(disable_lfs_lock_verify_command)
+
+# 解决新机器上git拉取代码时，出现的证书验证问题
+subprocess.run([git_exe, "config", "--global", "http.sslVerify", "false"], capture_output=True)
 
 
 def show_progress_bar(current, total, bar_length=40):
@@ -396,14 +411,30 @@ if __name__ == "__main__":
 
     start = datetime.datetime.now()
 
-    remote_path = f"https://OpenHUTB:T8w6TYB_r71gGTP3A02B@git.code.tencent.com/OpenHUTB/{args.repository}.git"
+    # Ubuntu 场景的仓库路由隔离
+    repo_target = args.repository
+    upload_target = args.upload
+
+    if IS_LINUX:
+        if args.repository == "release":
+            repo_target = "release_u"
+        if args.upload == "release":
+            upload_target = "release_u"
 
     # 如果指定 -upload 参数（上传发行版），则 -r 参数无效
     # d:\hutb\Build\dependencies\prerequisites\miniconda3\envs\hutb\python.exe download_from_git.py -u release
-    if args.upload == "release":
+    if args.upload != "none":
         print("Upload to repository: %s" % args.upload)
+        # 修改：后续所有的 remote_path 拼接不再使用写死的 args.repository，而是使用动态变量
+        remote_path = f"https://OpenHUTB:T8w6TYB_r71gGTP3A02B@git.code.tencent.com/OpenHUTB/{upload_target}.git"
+        # 做测试使用
+        # remote_path = f"https://xiao-ma-gua:50yaJFQEIF1Qw97DjkB7@git.code.tencent.com/xiao-ma-gua/{upload_target}.git"
+
+        # 配置不验证LFS锁
+        subprocess.run([git_exe, "config", f"lfs.{remote_path}.locksverify", "false"], capture_output=True)
+
         local_path = os.path.join(home_dir, "Build", "UE4Carla")  # , 'hutb'
-        rep_path = os.path.join(local_path, "release")
+        rep_path = os.path.join(local_path, upload_target)
         print("Upload path: ", rep_path)
         # 如果之前存在release目录，则删除
         if os.path.exists(rep_path):
@@ -457,9 +488,19 @@ if __name__ == "__main__":
         print("Upload finished.")
         sys.exit(0)
 
-    print(f"Repository to download: {args.repository}")
+    # ================== 下载逻辑 ==================
+    print(f"Repository to download: {repo_target}")
+    remote_path = f"https://OpenHUTB:T8w6TYB_r71gGTP3A02B@git.code.tencent.com/OpenHUTB/{repo_target}.git"
+    # 做测试使用
+    # remote_path = f"https://xiao-ma-gua:50yaJFQEIF1Qw97DjkB7@git.code.tencent.com/xiao-ma-gua/{repo_target}.git"
+
+    # 在此处动态拼接下载链接，并配置 LFS 锁
+    subprocess.run([git_exe, "config", f"lfs.{remote_path}.locksverify", "false"], capture_output=True)
+
     cur_dir = os.getcwd()
     if args.repository == "release":
+    # 做测试使用
+    # if args.repository in ["release", "test_release", "test_release_u"]:
         save_dir = "hutb"
     else:
         save_dir = args.repository
@@ -514,6 +555,13 @@ if __name__ == "__main__":
             f.extract(file, local_path)  # 解压位置
         f.close()
         print()  # 换行
+
+        # 赋予 Ubuntu 下二进制文件的执行权限
+        if IS_LINUX:
+            carla_sh = os.path.join(local_path, 'CarlaUE4.sh')
+            if os.path.exists(carla_sh):
+                os.chmod(carla_sh, os.stat(carla_sh).st_mode | stat.S_IEXEC)
+
         # if os.path.exists(os.path.join(local_path, "hutb.zip")):
         #     print("Remove hutb.zip...")
         #     os.remove(os.path.join(local_path, "hutb.zip"))
@@ -535,10 +583,13 @@ if __name__ == "__main__":
     print("Download finished, cost: %s" % (cost_time))
     print("Download path: ", local_path)
     
-    print("Launch simulator to click the file: %s" % os.path.join(local_path, 'CarlaUE4.exe'))
+    # 针对不同平台显示正确的启动指引
+    launcher_name = 'CarlaUE4.sh' if IS_LINUX else 'CarlaUE4.exe'
+    print(f"Launch simulator to execute the file: {os.path.join(local_path, launcher_name)}")
     print("Press any key to continue...")
     input()
     # kill_process_on_port(2000)  # 下载完成后自动启动CarlaUE4.exe，方便用户查看下载结果
     # if os.path.exists( os.path.join(local_path, 'CarlaUE4.exe') ):
     #     os.system("start "" %s" % os.path.join(local_path, 'CarlaUE4.exe'))  # 启动CarlaUE4.exe
     # time.sleep(15)  # 延时15秒，方便查看命令行输出
+
