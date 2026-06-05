@@ -49,11 +49,11 @@ jobs:
                        make CarlaUE4Editor ARGS="--chrono -j$(nproc)"
                     shell: bash
                     
-                    # - name: package 
-                    #run: |
-                    #   source ./setEnv64.sh 
-                    #   make package ARGS="--chrono"
-                    # shell: bash 
+                    - name: package 
+                    run: |
+                      source ./setEnv64.sh 
+                      make package ARGS="--chrono"
+                    shell: bash 
 
 
 
