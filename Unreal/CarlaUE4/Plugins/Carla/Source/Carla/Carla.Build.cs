@@ -18,12 +18,16 @@ public class Carla : ModuleRules
   public Carla(ReadOnlyTargetRules Target) : base(Target)
   {
     PrivatePCHHeaderFile = "Carla.h";
+
+    bool HasCustomGBufferView = File.Exists(Path.Combine(EngineDirectory, "Source", "Runtime", "Renderer", "Public", "GBufferView.h"));
+
     // 关键：强制开启 C++ 异常支持，以兼容 Boost 和 DReyeVR
     bEnableExceptions = true;
     if (IsWindows(Target))
     {
-       bEnableExceptions = true;
+      bEnableExceptions = true;
     }
+
     // Read config about carsim
     string CarlaPluginPath = Path.GetFullPath( ModuleDirectory );
     string ConfigDir =  Path.GetFullPath(Path.Combine(CarlaPluginPath, "../../../../Config/"));
@@ -71,6 +75,7 @@ public class Carla : ModuleRules
     PrivateIncludePaths.AddRange(
       new string[] {
         // ... add other private include paths required here ...
+        Path.Combine(EngineDirectory, "Source", "Runtime", "Engine", "Private")
       }
       );
 
@@ -137,6 +142,7 @@ public class Carla : ModuleRules
       );
 
     AddCarlaServerDependency(Target);
+    PublicDefinitions.Add(HasCustomGBufferView ? "CARLA_HAS_ENGINE_GBUFFER_VIEW=1" : "CARLA_HAS_ENGINE_GBUFFER_VIEW=0");
   }
 
   private bool UseDebugLibs(ReadOnlyTargetRules Target)
@@ -178,6 +184,7 @@ public class Carla : ModuleRules
   private void AddCarlaServerDependency(ReadOnlyTargetRules Target)
   {
     string LibCarlaInstallPath = Path.GetFullPath(Path.Combine(ModuleDirectory, "../../CarlaDependencies"));
+
     ADelegate GetLibName = (string BaseName) => {
       if (IsWindows(Target))
       {
@@ -222,6 +229,7 @@ public class Carla : ModuleRules
       PublicAdditionalLibraries.Add(Path.Combine(LibCarlaInstallPath, "lib", "proj.lib"));
       PublicAdditionalLibraries.Add(Path.Combine(LibCarlaInstallPath, "lib", "osm2odr.lib"));
       PublicAdditionalLibraries.Add(Path.Combine(LibCarlaInstallPath, "lib", "zlibstatic.lib"));
+
     }
     else
     {
@@ -317,7 +325,7 @@ public class Carla : ModuleRules
         PublicAdditionalLibraries.Add("stdc++");
         PublicAdditionalLibraries.Add("/usr/lib/x86_64-linux-gnu/libpython3.9.so");
       }
-  
+
       if (UsingRos2)
       {
         PublicAdditionalLibraries.Add(Path.Combine(LibCarlaInstallPath, "lib", GetLibName("carla_fastdds")));
@@ -337,11 +345,13 @@ public class Carla : ModuleRules
 
     }
     bEnableExceptions = true;
+
     // Include path.
     string LibCarlaIncludePath = Path.Combine(LibCarlaInstallPath, "include");
 
     PublicIncludePaths.Add(LibCarlaIncludePath);
     PrivateIncludePaths.Add(LibCarlaIncludePath);
+
     PublicDefinitions.Add("ASIO_NO_EXCEPTIONS");
     PublicDefinitions.Add("BOOST_NO_EXCEPTIONS");
     PublicDefinitions.Add("LIBCARLA_NO_EXCEPTIONS");
