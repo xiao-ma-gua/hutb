@@ -19,11 +19,7 @@ jobs:
                     uses: actions/checkout@v5
                     with:
                          fetch-depth: 0
-                  
-                  - name: Configure Git Mirror for GitHub
-                    run: |
-                       git config --global url."https://mirror.ghproxy.com/https://github.com/".insteadOf "https://github.com/"
-
+                         
                   - name: Show files
                     run: |
                        pwd
