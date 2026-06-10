@@ -44,6 +44,12 @@ jobs:
                        source ./Update.sh  
                     shell: bash 
                   
+                  - name: Fix Windows Compiler Flags and Clean Cache
+                    run: |
+                      # 使用 ${{ github.workspace }} 动态获取当前 Runner 的工作目录
+                      find ${{ github.workspace }} -type f -name "*.cs" -exec sed -i 's#-wd4103##g' {} +
+                      find ${{ github.workspace }} -type f -name "*.cs" -exec sed -i 's#/wd4103##g' {} +
+
                   - name: CarlaUE4Editor
                     run: |
                        source ./setEnv64.sh 
