@@ -46,9 +46,22 @@ jobs:
                   
                   - name: Fix Windows Compiler Flags and Clean Cache
                     run: |
-                      # 使用 ${{ github.workspace }} 动态获取当前 Runner 的工作目录
-                      find ${{ github.workspace }} -type f -name "*.cs" -exec sed -i 's#-wd4103##g' {} +
-                      find ${{ github.workspace }} -type f -name "*.cs" -exec sed -i 's#/wd4103##g' {} +
+                      # 💡 在脚本中直接使用 $UE4_ROOT 变量
+                       echo "=== 正在抹除 C# 脚本中的 Windows 专属忽略警告参数 (/wd4103) ==="
+                       find $UE4_ROOT/Engine/Source/Programs/UnrealBuildTool -type f -name "*.cs" -exec sed -i 's#-wd4103##g' {} +
+                       find $UE4_ROOT/Engine/Source/Programs/UnrealBuildTool -type f -name "*.cs" -exec sed -i 's#/wd4103##g' {} +
+                        
+                       find ${{ github.workspace }} -type f -name "*.cs" -exec sed -i 's#-wd4103##g' {} +
+                       find ${{ github.workspace }} -type f -name "*.cs" -exec sed -i 's#/wd4103##g' {} +
+
+                       echo "=== 正在强制重新编译虚幻引擎构建工具 (UBT) ==="
+                       rm -f $UE4_ROOT/Engine/Binaries/DotNET/UnrealBuildTool.exe
+                       cd $UE4_ROOT
+                       ./GenerateProjectFiles.sh
+
+                       echo "=== 正在物理清空被污染的 Intermediate 缓存 ==="
+                       rm -rf $UE4_ROOT/Engine/Intermediate/Build/Linux/B4D820EA
+                       rm -rf ${{ github.workspace }}/Unreal/CarlaUE4/Intermediate
 
                   - name: CarlaUE4Editor
                     run: |
