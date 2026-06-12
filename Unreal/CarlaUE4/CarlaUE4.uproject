@@ -159,15 +159,15 @@
 		},
 		{
 			"Name": "GLTFImporter",
-			"Enabled": true
+			"Enabled": false
 		},
 		{
 			"Name": "FunctionalTestingEditor",
-			"Enabled": true
+			"Enabled": false
 		},
 		{
 			"Name": "RuntimeTests",
-			"Enabled": true
+			"Enabled": false
 		}
 	]
 }
