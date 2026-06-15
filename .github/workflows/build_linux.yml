@@ -66,7 +66,7 @@ jobs:
                   - name: CarlaUE4Editor
                     run: |
                        source ./setEnv64.sh 
-                       make CarlaUE4Editor ARGS="--chrono -j$(nproc)"
+                       make CarlaUE4Editor ARGS="--chrono -j$(( $(nproc) / 3 ))"
                     shell: bash
                     
                   - name: package 
