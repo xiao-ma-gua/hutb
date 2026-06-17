@@ -71,7 +71,12 @@ jobs:
                     
                   - name: package 
                     run: |
-                       source ./setEnv64.sh 
+                       source /home/ubuntu/miniconda3/etc/profile.d/conda.sh
+                       conda activate carla
+
+                       source ./setEnv64.sh
+
+                       export MaxProcessorCount=$(( $(nproc) / 3 ))
                        make package ARGS="--chrono"
                     shell: bash 
 
