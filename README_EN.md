@@ -21,7 +21,7 @@ This project is a cinematic-quality physics simulator for researching [humanoid]
 <p align="center">
   <b>English</b> | <a href="README.md">简体中文</a> &nbsp;&nbsp;|&nbsp;&nbsp;
   🌐 <a href="https://github.com/OpenHUTB/hutb"><b>Project Home</b></a> &nbsp;|&nbsp;
-  📖 <a href="https://openhutb.github.io/"><b>Docs</b></a>
+  📖 <a href="https://openhutb.github.io/hutb/"><b>Docs</b></a>
 </p>
 
 
