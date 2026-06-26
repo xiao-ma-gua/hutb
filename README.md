@@ -41,7 +41,7 @@
 	```shell
 	python config.py --map Town10HD?GAME=VR
 	```
-	切换到 [无人机模式](https://openhutb.github.io/air_doc/) ：
+	切换到 [无人机模式](https://openhutb.github.io/air_doc/) （v2.3.0 版之后默认同时支持 Carla 模式和 AirSim 模式）：
 	```shell
 	python config.py --map Town10HD?GAME=AIR
 	# 起飞后按回车键进入不同状态

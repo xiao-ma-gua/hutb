@@ -39,7 +39,7 @@ This project is a cinematic-quality physics simulator for researching [humanoid]
 	```shell
 	python config.py --map Town10HD?GAME=VR
 	```
-	Switch to: [drone mode](https://openhutb.github.io/air_doc/) ：
+	Switch to: [drone mode](https://openhutb.github.io/air_doc/) (Version 2.3.0 and later support both Carla mode and AirSim mode by default.)：
 	```shell
 	python config.py --map Town10HD?GAME=AIR
 	# Press Enter after takeoff to enter different states.
