@@ -120,6 +120,8 @@ function copy_dir_fast {
 }
 
 function cook_tagged_materials {
+  return 0
+
   # Measure duration of this function call
   T_START_COOK_TAGGED_MATS=$(date +%s)
 
