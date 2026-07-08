@@ -62,6 +62,7 @@ jobs:
                        echo "=== 正在物理清空被污染的 Intermediate 缓存 ==="
                        rm -rf $UE4_ROOT/Engine/Intermediate/Build/Linux/B4D820EA
                        rm -rf ${{ github.workspace }}/Unreal/CarlaUE4/Intermediate
+                    shell: bash
 
                   - name: CarlaUE4Editor
                     run: |
@@ -69,6 +70,13 @@ jobs:
                        make CarlaUE4Editor ARGS="--chrono -j$(( $(nproc) / 3 ))"
                     shell: bash
                     
+                  # 在执行 make package 之前，动态注入 return 0
+                  - name: Patch Package.sh to skip bad materials
+                    run: |
+                       echo "=== 正在动态修改 Package.sh,跳过 cook_tagged_materials ==="
+                       sed -i 's/function cook_tagged_materials {/function cook_tagged_materials {\n    return 0/g' Util/BuildTools/Package.sh
+                    shell: bash 
+
                   - name: package 
                     run: |
                        source /home/ubuntu/miniconda3/etc/profile.d/conda.sh
