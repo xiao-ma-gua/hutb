@@ -1,9 +1,6 @@
-# CARLA Unreal Engine 4 Documentation
+# CARLA/VR Documentation
 
-!!! note
-    You are currently viewing the documentation for the **Unreal Engine 4.26 version of CARLA**. If you are using the **Unreal Engine version 5.5 version of CARLA** you should refer to the [documentation for that version](https://carla-ue5.readthedocs.io/en/latest/).
-
-Welcome to the CARLA documentation.
+Welcome to the CARLA and [VR](https://openhutb.github.io/doc_en/vr/) documentation.
 
 This home page contains an index with a brief description of the different sections in the documentation. Feel free to read in whatever order preferred. In any case, here are a few suggestions for newcomers.
 
