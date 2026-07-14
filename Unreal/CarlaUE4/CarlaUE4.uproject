@@ -185,6 +185,10 @@
 			]
 		},
 		{
+			"Name": "RoadRunnerCarlaContent",
+			"Enabled": true
+		},
+		{
 			"Name": "RoadRunnerCarlaIntegration",
 			"Enabled": false
 		},

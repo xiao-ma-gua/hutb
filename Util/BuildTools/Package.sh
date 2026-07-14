@@ -258,6 +258,7 @@ if ${DO_CARLA_RELEASE} ; then
   for BAD_PATH in \
     "/RoadRunnerMaterials/BaseMaterial:/Game/RoadRunnerMaterials/BaseMat" \
     "/RoadRunnerMaterials/BaseCutoutMaterial:/Game/RoadRunnerMaterials/BaseCutoutMat" \
+    "/RoadRunnerCarlaContent/:/Game/RoadRunnerCarlaContent/" \
     ; do
     FROM="${BAD_PATH%%:*}"
     TO="${BAD_PATH##*:}"
