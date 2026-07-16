@@ -27,10 +27,11 @@ jobs:
                   
                   - name: setup
                     run: |
-                       source ./setEnv64.sh 
+                       source ./setEnv64.sh
                        git update-index --skip-worktree Unreal/CarlaUE4/CarlaUE4.uproject
+                       bash setup.sh --download-only --skip-prerequisites
                        make setup ARGS="--chrono"
-                    shell: bash 
+                    shell: bash
                  
                   - name: build 
                     run: |
