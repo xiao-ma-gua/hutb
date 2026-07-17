@@ -29,7 +29,31 @@ jobs:
                     run: |
                        source ./setEnv64.sh
                        git update-index --skip-worktree Unreal/CarlaUE4/CarlaUE4.uproject
-                       bash setup.sh --download-only --skip-prerequisites
+
+                       # Clone dependencies_u (only for UE4 plugins, not source pkgs)
+                       echo "=== Cloning dependencies_u for plugins ==="
+                       GIT_LFS_SKIP_SMUDGE=1 git clone \
+                         "https://OpenHUTB:T8w6TYB_r71gGTP3A02B@git.code.tencent.com/OpenHUTB/dependencies_u.git" \
+                         Build/dependencies 2>/dev/null || true
+                       if [ -d Build/dependencies ]; then
+                         cd Build/dependencies && git lfs pull && cd ../..
+                         # Extract plugins
+                         7z x Build/dependencies/Plugins/RoadRunner_Plugins.zip -o"Unreal/CarlaUE4/Plugins/" -y
+                         7z x Build/dependencies/Plugins/CesiumForUnreal-426-v1.18.0-ue4.zip -o"Unreal/CarlaUE4/Plugins/" -y
+                         # UnrealRoboticsLab third-party deps
+                         mkdir -p Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install
+                         mkdir -p Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/MuJoCo
+                         tar -xzf Build/dependencies/Plugins/mujoco-3.3.5-linux-x86_64.tar.gz -C Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/MuJoCo --strip-components=1 2>/dev/null || true
+                         mkdir -p Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/CoACD
+                         unzip -qo Build/dependencies/Plugins/CoACD.zip -d Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/CoACD 2>/dev/null || true
+                         mkdir -p Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/libzmq
+                         tar -xzf Build/dependencies/Plugins/libzmq-linux.tar.gz -C Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/libzmq 2>/dev/null || true
+                         echo "=== Plugins extracted ==="
+                       fi
+
+                       # Clean leftover source dirs from previous runs (avoid conflict with make setup)
+                       rm -rf Build/*-source Build/*-src 2>/dev/null || true
+
                        make setup ARGS="--chrono"
                     shell: bash
                  
