@@ -43,7 +43,7 @@ jobs:
                          # UnrealRoboticsLab third-party deps
                          mkdir -p Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install
                          mkdir -p Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/MuJoCo
-                         tar -xzf Build/dependencies/Plugins/mujoco-2.3.7-linux-x86_64.tar.gz -C Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/MuJoCo --strip-components=1 2>/dev/null || true
+                         tar -xzf Build/dependencies/Plugins/mujoco-3.3.5-linux-x86_64.tar.gz -C Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/MuJoCo --strip-components=1 2>/dev/null || true
                          mkdir -p Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/CoACD
                          unzip -qo Build/dependencies/Plugins/CoACD.zip -d Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/CoACD 2>/dev/null || true
                          # Fix CoACD header: use defined() guard for _WIN32 (avoids -Wundef error on Linux)
