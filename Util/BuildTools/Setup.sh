@@ -450,7 +450,7 @@ else
   log "Retrieving libpng."
 
   start=$(date +%s)
-  wget ${LIBPNG_REPO}
+  wget --no-proxy ${LIBPNG_REPO}
   end=$(date +%s)
   echo "Elapsed Time downloading libpng: $(($end-$start)) seconds"
 
