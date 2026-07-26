@@ -46,24 +46,9 @@ jobs:
                          tar -xzf Build/dependencies/Plugins/mujoco-3.3.5-linux-x86_64.tar.gz -C Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/MuJoCo --strip-components=1 2>/dev/null || true
                          mkdir -p Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/CoACD
                          unzip -qo Build/dependencies/Plugins/CoACD.zip -d Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/CoACD 2>/dev/null || true
-                         # Fix CoACD header: use defined() guard for _WIN32 (avoids -Wundef error on Linux)
-                         sed -i 's/#if _WIN32/#if defined(_WIN32) \&\& _WIN32/g' Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/CoACD/CoACD/include/CoACD/coacd.h 2>/dev/null || true
                          mkdir -p Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/libzmq
                          tar -xzf Build/dependencies/Plugins/libzmq-linux.tar.gz -C Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/libzmq 2>/dev/null || true
                          echo "=== Plugins extracted ==="
-
-                         # Convert .so symlinks to real files (UE4 staging fails on size mismatch)
-                         for libdir in Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/MuJoCo/lib \
-                                      Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/libzmq/lib; do
-                             if [ -d "$libdir" ]; then
-                                 for symlink in $(find "$libdir" -type l -name "*.so*" 2>/dev/null); do
-                                     target=$(readlink -f "$symlink")
-                                     rm -f "$symlink"
-                                     cp "$target" "$symlink"
-                                     echo "  Converted symlink: $(basename $symlink)"
-                                 done
-                             fi
-                         done
                        fi
 
                        # Clean leftover source dirs from previous runs (avoid conflict with make setup)
