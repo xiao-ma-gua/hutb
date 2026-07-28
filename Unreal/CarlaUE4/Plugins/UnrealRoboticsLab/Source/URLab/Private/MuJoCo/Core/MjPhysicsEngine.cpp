@@ -111,10 +111,14 @@ static void URLab_InstallMujocoCallbacks()
 
     // mujoco.dll 在 URLab 的 Build.cs 中是延迟加载的，而链接器拒绝通过延迟导入绑定数据符号。
     // 通过 GetDllExport 手动解决这两个 mju_user_* 函数指针。
+#if PLATFORM_WINDOWS
     void* Handle = FPlatformProcess::GetDllHandle(TEXT("mujoco.dll"));
+#else
+    void* Handle = FPlatformProcess::GetDllHandle(TEXT("libmujoco.so"));
+#endif
     if (!Handle)
     {
-        UE_LOG(LogURLab, Warning, TEXT("[URLab] Could not resolve mujoco.dll to install error callbacks"));
+        UE_LOG(LogURLab, Warning, TEXT("[URLab] Could not resolve MuJoCo library to install error callbacks"));
         return;
     }
 

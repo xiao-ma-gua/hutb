@@ -24,8 +24,13 @@
 
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
-#ifndef _WIN32
-    #define _WIN32 PLATFORM_WINDOWS
+// 只在Windows系统上建立了_WIN32这个宏,Linux系统并未定义
+// (PLATFORM_WINDOWS is 0 on Linux, but #define _WIN32 0 still makes
+//  `defined _WIN32` true, causing MuJoCo's mjexport.h to use __declspec)
+#if PLATFORM_WINDOWS
+    #ifndef _WIN32
+        #define _WIN32 1
+    #endif
 #endif
 class FURLabModule : public IModuleInterface
 {

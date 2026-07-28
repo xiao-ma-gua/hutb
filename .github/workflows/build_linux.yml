@@ -10,6 +10,7 @@ jobs:
              name: Linux CI/CD
              timeout-minutes: 1440
              runs-on: [self-hosted, dev]
+             runs-on: [self-hosted, dev]
 
              env:
                 UE4_ROOT: /home/ubuntu/UnrealEngine_4.26
@@ -40,14 +41,34 @@ jobs:
                          # Extract plugins
                          7z x Build/dependencies/Plugins/RoadRunner_Plugins.zip -o"Unreal/CarlaUE4/Plugins/" -y
                          7z x Build/dependencies/Plugins/CesiumForUnreal-426-v1.18.0-ue4.zip -o"Unreal/CarlaUE4/Plugins/" -y
+
                          # UnrealRoboticsLab third-party deps
                          mkdir -p Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install
                          mkdir -p Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/MuJoCo
-                         tar -xzf Build/dependencies/Plugins/mujoco-3.3.5-linux-x86_64.tar.gz -C Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/MuJoCo --strip-components=1 2>/dev/null || true
+                         tar -xzf Build/dependencies/Plugins/mujoco-3.7.0-linux-x86_64.tar.gz -C Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/MuJoCo --strip-components=1 2>/dev/null || true
+
+                        # Replace symlinks with real files for staging
+                        MUJOCO_LIB=Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/MuJoCo/lib
+                        if [ -L "$MUJOCO_LIB/libmujoco.so" ]; then
+                          REAL=$(readlink -f "$MUJOCO_LIB/libmujoco.so")
+                          rm "$MUJOCO_LIB/libmujoco.so" && cp "$REAL" "$MUJOCO_LIB/libmujoco.so"
+                        fi
                          mkdir -p Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/CoACD
                          unzip -qo Build/dependencies/Plugins/CoACD.zip -d Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/CoACD 2>/dev/null || true
+
+                        # Fix CoACD directory nesting: move CoACD/CoACD/include -> CoACD/include
+                        if [ -d Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/CoACD/CoACD/include ] && [ ! -d Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/CoACD/include ]; then
+                          mv Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/CoACD/CoACD/include Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/CoACD/include
+                        fi
                          mkdir -p Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/libzmq
                          tar -xzf Build/dependencies/Plugins/libzmq-linux.tar.gz -C Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/libzmq 2>/dev/null || true
+                         
+                        # Replace symlinks with real files for staging
+                        ZMQ_LIB=Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/libzmq/lib
+                        if [ -L "$ZMQ_LIB/libzmq.so" ]; then
+                          REAL=$(readlink -f "$ZMQ_LIB/libzmq.so")
+                          rm "$ZMQ_LIB/libzmq.so" && cp "$REAL" "$ZMQ_LIB/libzmq.so"
+                        fi
                          echo "=== Plugins extracted ==="
                        fi
 

@@ -31,7 +31,7 @@
 #include "Materials/MaterialInstanceConstant.h"
 
 // Forward declarations
-namespace EFBXNormalGenerationMethod { enum Type : int; }
+#include "Factories/FbxMeshImportData.h"
 
 #include "MujocoGenerationAction.generated.h"
 
