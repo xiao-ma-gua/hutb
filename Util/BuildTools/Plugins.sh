@@ -28,7 +28,7 @@ done
 # -- Get Plugins ---------------------------------------------------------------
 # ==============================================================================
 
-source $(dirname "$0")/Environment.sh
+# source $(dirname "$0")/Environment.sh
 
 log "Retrieving Plugins"
 
