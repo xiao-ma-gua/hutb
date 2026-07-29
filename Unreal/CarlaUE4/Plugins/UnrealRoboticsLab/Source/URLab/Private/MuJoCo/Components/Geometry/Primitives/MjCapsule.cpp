@@ -60,6 +60,10 @@ void UMjCapsule::EnsureVisualizerMesh()
         if (InMesh) SMC->SetStaticMesh(InMesh);
         if (IsRegistered())
         {
+            if (SMC->GetAttachParent() != nullptr)
+            {
+                SMC->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
+            }
             SMC->SetupAttachment(this);
             SMC->RegisterComponent();
         }
@@ -82,6 +86,10 @@ void UMjCapsule::OnRegister()
     {
         if (IsValid(SMC) && !SMC->IsRegistered())
         {
+            if (SMC->GetAttachParent() != nullptr)
+            {
+                SMC->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
+            }
             SMC->SetupAttachment(this);
             SMC->RegisterComponent();
         }

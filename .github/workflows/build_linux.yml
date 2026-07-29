@@ -61,13 +61,14 @@ jobs:
                           mv Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/CoACD/CoACD/include Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/CoACD/include
                         fi
                          mkdir -p Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/libzmq
-                         tar -xzf Build/dependencies/Plugins/libzmq-linux.tar.gz -C Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/libzmq 2>/dev/null || true
-                         
-                        # Replace symlinks with real files for staging
+                         unzip -qo Build/dependencies/Plugins/libzmq-linux.zip -d Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/
+
+                        # Resolve symlinks for libzmq by copying the real .so in place
                         ZMQ_LIB=Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/libzmq/lib
                         if [ -L "$ZMQ_LIB/libzmq.so" ]; then
                           REAL=$(readlink -f "$ZMQ_LIB/libzmq.so")
-                          rm "$ZMQ_LIB/libzmq.so" && cp "$REAL" "$ZMQ_LIB/libzmq.so"
+                          rm "$ZMQ_LIB/libzmq.so" "$ZMQ_LIB/libzmq.so.5" 2>/dev/null || true
+                          cp "$REAL" "$ZMQ_LIB/" && mv "$ZMQ_LIB/$(basename "$REAL")" "$ZMQ_LIB/libzmq.so"
                         fi
                          echo "=== Plugins extracted ==="
                        fi
