@@ -28,7 +28,9 @@
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 #include "Algo/BinarySearch.h"
+#if WITH_EDITOR
 #include "DesktopPlatformModule.h"
+#endif
 #include "Framework/Application/SlateApplication.h"
 
 const FString AMjReplayManager::LiveSessionName = TEXT("Live Recording");
@@ -599,23 +601,29 @@ bool AMjReplayManager::LoadFromCSV(FString FilePath, float Timestep)
 
 bool AMjReplayManager::BrowseAndLoadCSV(float Timestep)
 {
-    IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get();
-    if (!DesktopPlatform) return false;
-
     FString DefaultDir = FPaths::ProjectSavedDir() / TEXT("URLab") / TEXT("Replays");
     IFileManager::Get().MakeDirectory(*DefaultDir, true);
 
     TArray<FString> OutFiles;
-    bool bOpened = DesktopPlatform->OpenFileDialog(
-        FSlateApplication::Get().FindBestParentWindowHandleForDialogs(nullptr),
-        TEXT("Load Replay"),
-        DefaultDir,
-        TEXT(""),
-        TEXT("CSV Files (*.csv)|*.csv|JSON Files (*.json)|*.json"),
-        EFileDialogFlags::None,
-        OutFiles);
+#if WITH_EDITOR
+    {
+        IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get();
+        if (!DesktopPlatform) return false;
+        bool bOpened = DesktopPlatform->OpenFileDialog(
+            FSlateApplication::Get().FindBestParentWindowHandleForDialogs(nullptr),
+            TEXT("Load Replay"),
+            DefaultDir,
+            TEXT(""),
+            TEXT("CSV Files (*.csv)|*.csv|JSON Files (*.json)|*.json"),
+            EFileDialogFlags::None,
+            OutFiles);
+        if (!bOpened || OutFiles.Num() == 0) return false;
+    }
+#else
+    return false;
+#endif
 
-    if (bOpened && OutFiles.Num() > 0)
+    if (OutFiles.Num() > 0)
     {
         if (OutFiles[0].EndsWith(TEXT(".json")))
         {
@@ -670,25 +678,29 @@ bool AMjReplayManager::BrowseAndSaveRecording()
         return false;
     }
 
-    IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get();
-    if (!DesktopPlatform) return false;
-
     // Ensure save directory exists
     FString SaveDir = FPaths::ProjectSavedDir() / TEXT("URLab") / TEXT("Replays");
     IFileManager::Get().MakeDirectory(*SaveDir, true);
 
     FString DefaultName = ActiveSessionName + TEXT(".csv");
     TArray<FString> OutFiles;
-    bool bOpened = DesktopPlatform->SaveFileDialog(
-        FSlateApplication::Get().FindBestParentWindowHandleForDialogs(nullptr),
-        TEXT("Save Replay Recording"),
-        SaveDir,
-        DefaultName,
-        TEXT("CSV Files (*.csv)|*.csv|JSON Files (*.json)|*.json"),
-        EFileDialogFlags::None,
-        OutFiles);
-
-    if (!bOpened || OutFiles.Num() == 0) return false;
+#if WITH_EDITOR
+    {
+        IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get();
+        if (!DesktopPlatform) return false;
+        bool bOpened = DesktopPlatform->SaveFileDialog(
+            FSlateApplication::Get().FindBestParentWindowHandleForDialogs(nullptr),
+            TEXT("Save Replay Recording"),
+            SaveDir,
+            DefaultName,
+            TEXT("CSV Files (*.csv)|*.csv|JSON Files (*.json)|*.json"),
+            EFileDialogFlags::None,
+            OutFiles);
+        if (!bOpened || OutFiles.Num() == 0) return false;
+    }
+#else
+    return false;
+#endif
 
     FString SavePath = OutFiles[0];
 

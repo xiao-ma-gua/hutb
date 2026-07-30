@@ -13,6 +13,8 @@ public class URLab : ModuleRules
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		//bUseRTTI = true;  // Required for type info
+			// Suppress -Wundef for third-party headers (CoACD coacd.h uses #if _WIN32)
+			bEnableUndefinedIdentifierWarnings = false;
 		//bEnableExceptions = true;
 
 		PublicDependencyModuleNames.AddRange(new string[]
@@ -57,9 +59,15 @@ public class URLab : ModuleRules
 			"EnhancedInput",
 			"Chaos",
 			"Landscape",
-			"Eigen",
-			"DesktopPlatform"
+			"Eigen"
 		});
+
+		// DesktopPlatform is editor-only (non-redistributable), cannot be
+		// linked in Shipping builds
+		if (Target.bBuildEditor)
+		{
+			PrivateDependencyModuleNames.Add("DesktopPlatform");
+		}
 
 		DynamicallyLoadedModuleNames.AddRange(new string[]
 		{
@@ -90,8 +98,9 @@ public class URLab : ModuleRules
 
 		if (Target.Platform == UnrealTargetPlatform.Linux)
 		{
-			PublicDefinitions.Add("_WIN32=0");
-			PublicDefinitions.Add("USE_DECLSPEC=1");
+			// MuJoCo 3.7.0 需要 C++17 来使用 std::byte
+			CppStandard = CppStandardVersion.Cpp17;
+			// 移除 _WIN32=0，以避免在 Linux 上导致 mjexport.h 使用 __declspec
 			PublicDefinitions.Add("__linux__=1");
 			PublicDefinitions.Add("__unix__=1");
 		}

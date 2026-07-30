@@ -23,6 +23,7 @@
 // MujocoMeshImporter.cpp — Mesh and material import methods for UMujocoGenerationAction.
 
 #include "MujocoGenerationAction.h"
+#include "Misc/FileHelper.h"
 #include "URLabEditorLogging.h"
 #include "Engine/StaticMesh.h"
 #include "AssetToolsModule.h"
@@ -83,7 +84,7 @@ UStaticMesh* UMujocoGenerationAction::ImportSingleMesh(const FString& SourcePath
 
     // 先试着用 MikkTSpace 导入（效果最好）
     // 使用 ActualSourcePath 替代 SourcePath
-    UStaticMesh* ImportedMesh = AttemptMeshImport(ActualSourcePath, DestinationPath, EFBXNormalGenerationMethod::MikkTSpace);
+    UStaticMesh* ImportedMesh = AttemptMeshImport(ActualSourcePath, DestinationPath, static_cast<EFBXNormalGenerationMethod::Type>(1)); // MikkTSpace
 
     // 验证网格
     if (ImportedMesh && ValidateMesh(ImportedMesh, FileName))
@@ -102,7 +103,7 @@ UStaticMesh* UMujocoGenerationAction::ImportSingleMesh(const FString& SourcePath
         UE_LOG(LogURLabEditor, Warning, TEXT("Failed to import mesh '%s' with MikkTSpace, attempting fallback"), *FileName);
     }
 
-    ImportedMesh = AttemptMeshImport(ActualSourcePath, DestinationPath, EFBXNormalGenerationMethod::BuiltIn);
+    ImportedMesh = AttemptMeshImport(ActualSourcePath, DestinationPath, static_cast<EFBXNormalGenerationMethod::Type>(0)); // BuiltIn
 
     if (ImportedMesh && ValidateMesh(ImportedMesh, FileName))
     {
@@ -329,9 +330,9 @@ bool UMujocoGenerationAction::ValidateMesh(UStaticMesh* Mesh, const FString& Mes
     // }
 
     // 记录网格统计信息
-    int32 NumVertices; // = LOD0.VertexBuffers.StaticMeshVertexBuffer.GetNumVertices();
-    int32 NumTriangles; // = LOD0.IndexBuffer.GetNumIndices() / 3;
-    int32 NumUVChannels; // = LOD0.VertexBuffers.StaticMeshVertexBuffer.GetNumTexCoords();
+    int32 NumVertices = 0; // = LOD0.VertexBuffers.StaticMeshVertexBuffer.GetNumVertices();
+    int32 NumTriangles = 0; // = LOD0.IndexBuffer.GetNumIndices() / 3;
+    int32 NumUVChannels = 0; // = LOD0.VertexBuffers.StaticMeshVertexBuffer.GetNumTexCoords();
 
     UE_LOG(LogURLabEditor, Log, TEXT("Mesh '%s' validation: %d vertices, %d triangles, %d UV channels"),
         *MeshName, NumVertices, NumTriangles, NumUVChannels);

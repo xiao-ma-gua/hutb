@@ -40,7 +40,12 @@ void FURLabModule::StartupModule()
     // Function to load a DLL and log success/failure
     auto LoadDependencyDLL = [&](const FString& LibraryName, const FString& SubDir) {
         // Try plugin third-party path first (editor / development)
+        // Linux uses lib/ directory; Windows uses bin/
+#if PLATFORM_WINDOWS
         FString DLLPath = FPaths::Combine(InstallDir, SubDir, TEXT("bin"), LibraryName);
+#else
+        FString DLLPath = FPaths::Combine(InstallDir, SubDir, TEXT("lib"), LibraryName);
+#endif
         if (!FPaths::FileExists(DLLPath))
         {
             // Packaged build: DLLs staged next to the executable
@@ -61,16 +66,26 @@ void FURLabModule::StartupModule()
     };
 
     // Load MuJoCo. Since 3.7.0 the obj/stl decoders are compiled into
-    // mujoco.dll itself (changelog item 9); loading the standalone
-    // obj_decoder.dll / stl_decoder.dll would cause a plugin-registration
+    // the library itself (changelog item 9); loading the standalone
+    // obj_decoder / stl_decoder would cause a plugin-registration
     // collision and crash during module init.
+#if PLATFORM_WINDOWS
     LoadDependencyDLL(TEXT("mujoco.dll"), TEXT("MuJoCo"));
+#else
+    LoadDependencyDLL(TEXT("libmujoco.so"), TEXT("MuJoCo"));
+#endif
 
     // Load ZMQ
+#if PLATFORM_WINDOWS
     LoadDependencyDLL(TEXT("libzmq-v143-mt-4_3_6.dll"), TEXT("libzmq"));
+#else
+    LoadDependencyDLL(TEXT("libzmq.so"), TEXT("libzmq"));
+#endif
 
-    // Load CoACD (Shared library)
+    // Load CoACD (Shared library — Windows only; header-only on Linux)
+#if PLATFORM_WINDOWS
     LoadDependencyDLL(TEXT("lib_coacd.dll"), TEXT("CoACD"));
+#endif
 
     // Some CoACD dependencies like TBB or runtimes might be in CoACD/bin
     // They should be loaded automatically if in search path, but we can verify here if needed.

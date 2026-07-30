@@ -49,6 +49,14 @@ void UMjCylinder::EnsureVisualizerMesh()
 
         if (IsRegistered())
         {
+            // Detach first if already attached (e.g. during Cook serialization
+            // the attachment state can be stale), to avoid the UE4.26 ensure:
+            // "SetupAttachment cannot be used once a component has already had
+            // AttachTo used to connect it to a parent."
+            if (VisualizerMesh->GetAttachParent() != nullptr)
+            {
+                VisualizerMesh->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
+            }
             VisualizerMesh->SetupAttachment(this);
             VisualizerMesh->RegisterComponent();
         }
@@ -62,6 +70,10 @@ void UMjCylinder::OnRegister()
 
     if (VisualizerMesh && !VisualizerMesh->IsRegistered())
     {
+        if (VisualizerMesh->GetAttachParent() != nullptr)
+        {
+            VisualizerMesh->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
+        }
         VisualizerMesh->SetupAttachment(this);
         VisualizerMesh->RegisterComponent();
     }

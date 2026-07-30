@@ -35,5 +35,8 @@ public class CarlaUE4Target : TargetRules
     }
 
     AdditionalCompilerArguments = "/wd4103";
+
+	  // URLab 插件的 MuJoCo 依赖需要 C++17（std::byte）
+	  CppStandard = CppStandardVersion.Cpp17;
 	}
 }

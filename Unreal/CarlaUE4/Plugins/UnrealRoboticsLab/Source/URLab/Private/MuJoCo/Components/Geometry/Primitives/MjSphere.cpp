@@ -49,6 +49,10 @@ void UMjSphere::EnsureVisualizerMesh()
 
         if (IsRegistered())
         {
+            if (VisualizerMesh->GetAttachParent() != nullptr)
+            {
+                VisualizerMesh->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
+            }
             VisualizerMesh->SetupAttachment(this);
             VisualizerMesh->RegisterComponent();
         }
@@ -62,6 +66,10 @@ void UMjSphere::OnRegister()
 
     if (VisualizerMesh && !VisualizerMesh->IsRegistered())
     {
+        if (VisualizerMesh->GetAttachParent() != nullptr)
+        {
+            VisualizerMesh->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
+        }
         VisualizerMesh->SetupAttachment(this);
         VisualizerMesh->RegisterComponent();
     }
