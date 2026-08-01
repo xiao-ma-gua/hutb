@@ -339,12 +339,14 @@ if ${DO_CARLA_RELEASE} ; then
     cp -r "./Unreal/CarlaUE4/Plugins/Carla/CarlaDependencies/lib" "${DESTINATION}/CarlaUE4/Plugins/Carla/CarlaDependencies"
   fi
 
-  # 修复 MuJoCo 版本化库：UBT *.so 全局通配符与 *.so.3.7.0 不匹配，导致 libmujoco.so 被编译为 staging 文件，但 libmujoco.so.3.7.0 未被正确生成。  
-  # 二进制文件的 RPATH 已经指向该目录，只需在运行时使用版本化的文件名即可（SONAME 为 libmujoco.so.3.7.0）。
-  MUJOCO_STAGED_LIB="${DESTINATION}/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/MuJoCo/lib"
-  if [ -f "$MUJOCO_STAGED_LIB/libmujoco.so" ] && [ ! -f "$MUJOCO_STAGED_LIB/libmujoco.so.3.7.0" ]; then
-    ln -s libmujoco.so "$MUJOCO_STAGED_LIB/libmujoco.so.3.7.0"
-    log "Created libmujoco.so.3.7.0 -> libmujoco.so symlink"
+  # UBT 的 *.so 匹配不包括 *.so.3.7.0，因此需显式复制带版本号的文件
+  MUJOCO_SRC_LIB="./Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/MuJoCo/lib"
+  MUJOCO_DST_LIB="${DESTINATION}/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/MuJoCo/lib"
+  if [ -f "$MUJOCO_SRC_LIB/libmujoco.so" ]; then
+    mkdir -p "$MUJOCO_DST_LIB"
+    cp -u "$MUJOCO_SRC_LIB/libmujoco.so" "$MUJOCO_DST_LIB/"
+    cp -u "$MUJOCO_SRC_LIB/libmujoco.so" "$MUJOCO_DST_LIB/libmujoco.so.3.7.0"
+    log "Packaged MuJoCo library"
   fi
 
   copy_if_changed "./Unreal/CarlaUE4/Content/Carla/HDMaps/*.pcd" "${DESTINATION}/HDMaps/"
