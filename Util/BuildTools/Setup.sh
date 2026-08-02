@@ -196,7 +196,6 @@ for PY_VERSION in ${PY_VERSION_LIST[@]} ; do
     py3_lib=$(${py3} -c "from sysconfig import get_paths as gp; print(gp()['stdlib'])")
     pyv=`$py3 -c "import sys;x='{v[0]}.{v[1]}'.format(v=list(sys.version_info[:2]));sys.stdout.write(x)";`
     ./bootstrap.sh \
-        # --with-toolset=clang \
         --with-toolset=gcc \
         --prefix=../boost-install \
         --with-libraries=python,filesystem,system,program_options \
