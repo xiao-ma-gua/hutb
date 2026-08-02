@@ -56,8 +56,8 @@ source $(dirname "$0")/Environment.sh
 #export CXX="$UE4_ROOT/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v17_clang-10.0.1-centos7/x86_64-unknown-linux-gnu/bin/clang++"
 #export PATH="$UE4_ROOT/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v17_clang-10.0.1-centos7/x86_64-unknown-linux-gnu/bin:$PATH"
 
-export CC=/usr/bin/clang-11
-export CXX=/usr/bin/clang++-11
+export CC=/usr/bin/clang
+export CXX=/usr/bin/clang++
 export PATH=/usr/bin:/bin:$PATH                              
 
 echo $PATH
@@ -186,7 +186,8 @@ for PY_VERSION in ${PY_VERSION_LIST[@]} ; do
 
     pushd ${BOOST_BASENAME}-source >/dev/null
 
-    BOOST_TOOLSET="clang-10.0"
+    # BOOST_TOOLSET="clang-10.0"
+    BOOST_TOOLSET="gcc"
     BOOST_CFLAGS="-fPIC -std=c++14 -DBOOST_ERROR_CODE_HEADER_ONLY"
 
     py3="/usr/bin/env python${PY_VERSION}"
@@ -195,7 +196,8 @@ for PY_VERSION in ${PY_VERSION_LIST[@]} ; do
     py3_lib=$(${py3} -c "from sysconfig import get_paths as gp; print(gp()['stdlib'])")
     pyv=`$py3 -c "import sys;x='{v[0]}.{v[1]}'.format(v=list(sys.version_info[:2]));sys.stdout.write(x)";`
     ./bootstrap.sh \
-        --with-toolset=clang \
+        # --with-toolset=clang \
+        --with-toolset=gcc \
         --prefix=../boost-install \
         --with-libraries=python,filesystem,system,program_options \
         --with-python=${py3} --with-python-root=${py3_root}
