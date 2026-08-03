@@ -186,7 +186,7 @@ for PY_VERSION in ${PY_VERSION_LIST[@]} ; do
 
     pushd ${BOOST_BASENAME}-source >/dev/null
 
-    BOOST_TOOLSET="clang-10"
+    BOOST_TOOLSET="clang-10.0"
     # BOOST_TOOLSET="gcc"
     BOOST_CFLAGS="-fPIC -std=c++14 -DBOOST_ERROR_CODE_HEADER_ONLY"
 
@@ -196,7 +196,7 @@ for PY_VERSION in ${PY_VERSION_LIST[@]} ; do
     py3_lib=$(${py3} -c "from sysconfig import get_paths as gp; print(gp()['stdlib'])")
     pyv=`$py3 -c "import sys;x='{v[0]}.{v[1]}'.format(v=list(sys.version_info[:2]));sys.stdout.write(x)";`
     ./bootstrap.sh \
-        --with-toolset=clang-10 \
+        --with-toolset=clang \
         --prefix=../boost-install \
         --with-libraries=python,filesystem,system,program_options \
         --with-python=${py3} --with-python-root=${py3_root}
