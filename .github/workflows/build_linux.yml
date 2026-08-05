@@ -117,12 +117,12 @@ jobs:
                        make CarlaUE4Editor ARGS="--chrono -j$(( $(nproc) / 3 ))"
                     shell: bash
                     
-                  # 在执行 make package 之前，动态注入 return 0
-                  - name: Patch Package.sh to skip bad materials
-                    run: |
-                       echo "=== 正在动态修改 Package.sh,跳过 cook_tagged_materials ==="
-                       sed -i 's/function cook_tagged_materials {/function cook_tagged_materials {\n    return 0/g' Util/BuildTools/Package.sh
-                    shell: bash
+                  # # 在执行 make package 之前，动态注入 return 0
+                  # - name: Patch Package.sh to skip bad materials
+                  #   run: |
+                  #      echo "=== 正在动态修改 Package.sh,跳过 cook_tagged_materials ==="
+                  #      sed -i 's/function cook_tagged_materials {/function cook_tagged_materials {\n    return 0/g' Util/BuildTools/Package.sh
+                  #   shell: bash
 
                   # 修复 Content 包中 .uasset 文件的非法材质路径（缺少 /Game/ 根前缀）
                   - name: Fix invalid material paths in RoadRunner assets

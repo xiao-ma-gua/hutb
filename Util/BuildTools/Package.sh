@@ -120,7 +120,6 @@ function copy_dir_fast {
 }
 
 function cook_tagged_materials {
-    # return 0
 
   # Measure duration of this function call
   T_START_COOK_TAGGED_MATS=$(date +%s)
@@ -338,6 +337,16 @@ if ${DO_CARLA_RELEASE} ; then
 
   if [ -d "./Unreal/CarlaUE4/Plugins/Carla/CarlaDependencies/lib" ] ; then
     cp -r "./Unreal/CarlaUE4/Plugins/Carla/CarlaDependencies/lib" "${DESTINATION}/CarlaUE4/Plugins/Carla/CarlaDependencies"
+  fi
+
+  # UBT 的 *.so 匹配不包括 *.so.3.7.0，因此需显式复制带版本号的文件
+  MUJOCO_SRC_LIB="./Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/MuJoCo/lib"
+  MUJOCO_DST_LIB="${DESTINATION}/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/MuJoCo/lib"
+  if [ -f "$MUJOCO_SRC_LIB/libmujoco.so" ]; then
+    mkdir -p "$MUJOCO_DST_LIB"
+    cp -u "$MUJOCO_SRC_LIB/libmujoco.so" "$MUJOCO_DST_LIB/"
+    cp -u "$MUJOCO_SRC_LIB/libmujoco.so" "$MUJOCO_DST_LIB/libmujoco.so.3.7.0"
+    log "Packaged MuJoCo library"
   fi
 
   copy_if_changed "./Unreal/CarlaUE4/Content/Carla/HDMaps/*.pcd" "${DESTINATION}/HDMaps/"

@@ -152,7 +152,8 @@ if [ "$BUILD_AIR" = "true" ]; then
     echo "Current dir: $(pwd)"
     # Build AirSim
     # read -p "press enter to continue ..."
-    ./setup.sh 
+    # 绕过代理，以解决通过代理失败的外部下载（例如 gitlab.com SSL）问题
+    env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY ./setup.sh
     ./build.sh 
     cp -a \
        "$AIR_BUILD_PATH/Unreal/Plugins/AirSim" \

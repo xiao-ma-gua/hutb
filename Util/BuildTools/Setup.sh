@@ -187,6 +187,7 @@ for PY_VERSION in ${PY_VERSION_LIST[@]} ; do
     pushd ${BOOST_BASENAME}-source >/dev/null
 
     BOOST_TOOLSET="clang-10.0"
+    # BOOST_TOOLSET="gcc"
     BOOST_CFLAGS="-fPIC -std=c++14 -DBOOST_ERROR_CODE_HEADER_ONLY"
 
     py3="/usr/bin/env python${PY_VERSION}"
