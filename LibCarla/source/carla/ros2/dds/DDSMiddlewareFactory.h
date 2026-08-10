@@ -12,9 +12,14 @@
 #include "carla/ros2/dds/IDDSSubscriberMiddleware.h"
 #include "carla/Logging.h"
 
-#if defined(CARLA_ROS2_DDS_FASTDDS)
+#if defined(CARLA_ROS2_DDS_FASTDDS) && !defined(CARLA_ROS2_DDS_TESTING)
 #  include "carla/ros2/dds/fastdds/FastDDSPublisherMiddleware.h"
 #  include "carla/ros2/dds/fastdds/FastDDSSubscriberMiddleware.h"
+#endif
+
+#if defined(CARLA_ROS2_DDS_CYCLONEDDS) && !defined(CARLA_ROS2_DDS_TESTING)
+#  include "carla/ros2/dds/cyclonedds/CycloneDDSPublisherMiddleware.h"
+#  include "carla/ros2/dds/cyclonedds/CycloneDDSSubscriberMiddleware.h"
 #endif
 
 namespace carla {
@@ -41,6 +46,12 @@ class DDSMiddlewareFactory {
     switch (middleware) {
       case DDSMiddleware::FastDDS:
 #if defined(CARLA_ROS2_DDS_FASTDDS)
+        return true;
+#else
+        return false;
+#endif
+      case DDSMiddleware::CycloneDDS:
+#if defined(CARLA_ROS2_DDS_CYCLONEDDS)
         return true;
 #else
         return false;
@@ -77,11 +88,19 @@ class DDSMiddlewareFactory {
   static std::unique_ptr<IDDSPublisherMiddleware> CreatePublisher() {
     switch (GetActiveMiddleware()) {
       case DDSMiddleware::FastDDS:
-#if defined(CARLA_ROS2_DDS_FASTDDS)
+#if defined(CARLA_ROS2_DDS_FASTDDS) && !defined(CARLA_ROS2_DDS_TESTING)
         return std::unique_ptr<IDDSPublisherMiddleware>(
             new FastDDSPublisherMiddleware<T>());
 #else
         log_error("DDSMiddlewareFactory: FastDDS not compiled in");
+        return nullptr;
+#endif
+      case DDSMiddleware::CycloneDDS:
+#if defined(CARLA_ROS2_DDS_CYCLONEDDS) && !defined(CARLA_ROS2_DDS_TESTING)
+        return std::unique_ptr<IDDSPublisherMiddleware>(
+            new CycloneDDSPublisherMiddleware<T>());
+#else
+        log_error("DDSMiddlewareFactory: CycloneDDS not compiled in");
         return nullptr;
 #endif
     }
@@ -95,11 +114,19 @@ class DDSMiddlewareFactory {
   static std::unique_ptr<IDDSSubscriberMiddleware> CreateSubscriber() {
     switch (GetActiveMiddleware()) {
       case DDSMiddleware::FastDDS:
-#if defined(CARLA_ROS2_DDS_FASTDDS)
+#if defined(CARLA_ROS2_DDS_FASTDDS) && !defined(CARLA_ROS2_DDS_TESTING)
         return std::unique_ptr<IDDSSubscriberMiddleware>(
             new FastDDSSubscriberMiddleware<S>());
 #else
         log_error("DDSMiddlewareFactory: FastDDS not compiled in");
+        return nullptr;
+#endif
+      case DDSMiddleware::CycloneDDS:
+#if defined(CARLA_ROS2_DDS_CYCLONEDDS) && !defined(CARLA_ROS2_DDS_TESTING)
+        return std::unique_ptr<IDDSSubscriberMiddleware>(
+            new CycloneDDSSubscriberMiddleware<S>());
+#else
+        log_error("DDSMiddlewareFactory: CycloneDDS not compiled in");
         return nullptr;
 #endif
     }
