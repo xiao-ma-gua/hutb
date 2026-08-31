@@ -10,8 +10,11 @@
 #include "carla/BufferView.h"
 #include "carla/geom/Transform.h"
 #include "carla/ros2/ROS2CallbackData.h"
+#include "carla/ros2/middleware/Middleware.h"
+#include "carla/ros2/middleware/MiddlewareConfig.h"
 #include "carla/streaming/detail/Types.h"
 
+#include <mutex>
 #include <unordered_set>
 #include <unordered_map>
 #include <memory>
@@ -41,6 +44,7 @@ namespace ros2 {
 
   class CarlaTransformPublisher;
   class CarlaClockPublisher;
+  class CarlaMapPublisher;
 
 class ROS2
 {
@@ -55,7 +59,12 @@ class ROS2
     }
 
     // General
-    void Enable(bool enable);
+    // Returns true when enabling succeeds (middleware compiled in), false otherwise.
+    // Callers pass enable=false to shut down; the return value is always true in that case.
+    // domain_id selects the ROS 2 domain id for the chosen middleware; kUnsetDomainId
+    // (the default) keeps each middleware's native default.
+    bool Enable(bool enable, Middleware middleware = Middleware::FastDDS,
+        int domain_id = kUnsetDomainId);
     void Shutdown();
 
     bool IsEnabled() { return _enabled; }
@@ -132,6 +141,10 @@ class ROS2
       uint32_t other_actor,
       carla::geom::Vector3D impulse,
       void* actor);
+    // Publishes the OpenDRIVE description of the current map as a latched
+    // topic. Called once per episode; re-publishing refreshes the latched
+    // sample after a map change.
+    void ProcessDataFromMap(const std::string &open_drive);
 
   private:
     std::shared_ptr<CarlaTransformPublisher> GetOrCreateTransformPublisher(void *actor);
@@ -142,12 +155,19 @@ class ROS2
 
   static std::shared_ptr<ROS2> _instance;
 
+  // Protects all map members from concurrent access by the UE4 tick thread
+  // (ProcessDataFrom*, SetFrame) and the RPC thread (Register*, Unregister*).
+  // recursive_mutex is required because RegisterSensor calls RegisterActor,
+  // and UnregisterSensor calls UnregisterActor.
+  mutable std::recursive_mutex _mutex;
+
   bool _enabled { false };
   uint64_t _frame { 0 };
   int32_t _seconds { 0 };
   uint32_t _nanoseconds { 0 };
 
   std::shared_ptr<CarlaClockPublisher> _clock_publisher;
+  std::shared_ptr<CarlaMapPublisher> _map_publisher;
 
   // actor->parent relationship
   std::unordered_map<void *, void *> _actor_parent_map;

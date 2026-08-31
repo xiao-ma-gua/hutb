@@ -6,7 +6,7 @@
 
 DOC_STRING="Build and launch CarlaUE4."
 
-USAGE_STRING="Usage: $0 [-h|--help] [--build] [--rebuild] [--launch] [--clean] [--hard-clean] [--opengl] [--chrono] [--chrono-path=PATH]"
+USAGE_STRING="Usage: $0 [-h|--help] [--build] [--rebuild] [--launch] [--clean] [--hard-clean] [--opengl] [--chrono] [--chrono-path=PATH] [--ros2] [--rmw=MIDDLEWARE] [--ros-domain-id=N]"
 
 REMOVE_INTERMEDIATE=false
 HARD_CLEAN=false
@@ -19,13 +19,18 @@ USE_PYTORCH=false
 USE_UNITY=true
 USE_ROS2=false
 CHRONO_PATH=""
+RMW=""
+# Holds the value of --ros-domain-id. Deliberately NOT named ROS_DOMAIN_ID so it
+# does not shadow the standard ROS_DOMAIN_ID environment variable, which the
+# launched editor reads as a fallback when --ros-domain-id is not given.
+ROS_DOMAIN_ID_ARG=""
 
 EDITOR_FLAGS=""
 
 GDB=
 RHI="-vulkan"
 
-OPTS=`getopt -o h --long help,build,rebuild,launch,clean,hard-clean,gdb,opengl,carsim,pytorch,chrono,chrono-path:,ros2,no-simready,no-unity,editor-flags: -n 'parse-options' -- "$@"`
+OPTS=`getopt -o h --long help,build,rebuild,launch,clean,hard-clean,gdb,opengl,carsim,pytorch,chrono,chrono-path:,ros2,rmw:,ros-domain-id:,no-simready,no-unity,editor-flags: -n 'parse-options' -- "$@"`
 
 eval set -- "$OPTS"
 
@@ -73,6 +78,12 @@ while [[ $# -gt 0 ]]; do
     --ros2 )
       USE_ROS2=true;
       shift ;;
+    --rmw )
+      RMW=$2;
+      shift 2 ;;
+    --ros-domain-id )
+      ROS_DOMAIN_ID_ARG=$2;
+      shift 2 ;;
     --no-simready )
       USE_SIMREADY=false
       shift ;;
@@ -88,6 +99,19 @@ while [[ $# -gt 0 ]]; do
       shift ;;
   esac
 done
+
+# Forward ROS2 runtime flags to the UE4 editor command line.
+# --ros2 is consumed above for build-time config (OptionalModules.ini);
+# the editor also needs it as a runtime flag for CarlaSettings.
+if ${USE_ROS2} ; then
+  EDITOR_FLAGS="${EDITOR_FLAGS} --ros2"
+fi
+if [ -n "${RMW}" ] ; then
+  EDITOR_FLAGS="${EDITOR_FLAGS} --rmw=${RMW}"
+fi
+if [ -n "${ROS_DOMAIN_ID_ARG}" ] ; then
+  EDITOR_FLAGS="${EDITOR_FLAGS} --ros-domain-id=${ROS_DOMAIN_ID_ARG}"
+fi
 
 # ==============================================================================
 # -- Set up environment --------------------------------------------------------
