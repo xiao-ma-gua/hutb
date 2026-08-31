@@ -7,6 +7,7 @@
 #include "carla/multigpu/listener.h"
 #include "carla/multigpu/primary.h"
 
+#include <boost/asio/error.hpp>
 #include <boost/asio/post.hpp>
 
 #include "carla/Logging.h"
@@ -31,7 +32,7 @@ namespace multigpu {
     _acceptor.cancel();
     _acceptor.close();
     _io_context.stop();
-    _io_context.reset();
+    _io_context.restart();
   }
   
   void Listener::OpenSession(
@@ -48,7 +49,8 @@ namespace multigpu {
     auto handle_query = [on_opened, on_closed, on_response, session, self](const error_code &ec) {
     if (!ec) {
       session->Open(std::move(on_opened), std::move(on_closed), std::move(on_response));
-    } else {
+    } else if (ec != boost::asio::error::operation_aborted) {
+      // operation_aborted is the normal shutdown path (Listener::Stop -> cancel()).
       log_error("Secondary server:", ec.message());
     }
   };

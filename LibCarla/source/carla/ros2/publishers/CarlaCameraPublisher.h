@@ -10,10 +10,8 @@
 #include "carla/ros2/publishers/BasePublisher.h"
 #include "carla/ros2/publishers/PublisherImpl.h"
 
-#include "carla/ros2/types/Image.h"
-#include "carla/ros2/types/ImagePubSubTypes.h"
-#include "carla/ros2/types/CameraInfo.h"
-#include "carla/ros2/types/CameraInfoPubSubTypes.h"
+#include "carla/ros2/types/msg/Image.h"
+#include "carla/ros2/types/msg/CameraInfo.h"
 
 namespace carla {
 namespace ros2 {
@@ -21,21 +19,26 @@ namespace ros2 {
   class CarlaCameraPublisher : public BasePublisher {
     public:
       struct ImageMsgTraits {
-        using msg_type = sensor_msgs::msg::Image;
-        using msg_pubsub_type = sensor_msgs::msg::ImagePubSubType;
+        using msg_type = msg::Image;
       };
 
       struct CameraInfoMsgTraits {
-        using msg_type = sensor_msgs::msg::CameraInfo;
-        using msg_pubsub_type = sensor_msgs::msg::CameraInfoPubSubType;
+        using msg_type = msg::CameraInfo;
       };
 
       CarlaCameraPublisher(std::string base_topic_name, std::string frame_id) :
         BasePublisher(base_topic_name, frame_id),
         _impl_image(std::make_shared<PublisherImpl<ImageMsgTraits>>()),
         _impl_camera_info(std::make_shared<PublisherImpl<CameraInfoMsgTraits>>()) {
-          _impl_image->Init(GetBaseTopicName() + "/image");
-          _impl_camera_info->Init(GetBaseTopicName() + "/camera_info");
+          // Best-effort sensor-data QoS: image frames are large and per-tick,
+          // so a slow subscriber must never block the publishing thread.
+          // camera_info shares the image QoS, the image_transport convention.
+          if (!_impl_image->Init(GetBaseTopicName() + "/image", PublisherQos::SensorData())) {
+            log_warning("CarlaCameraPublisher: Init failed for topic: ", GetBaseTopicName(), "/image");
+          }
+          if (!_impl_camera_info->Init(GetBaseTopicName() + "/camera_info", PublisherQos::SensorData())) {
+            log_warning("CarlaCameraPublisher: Init failed for topic: ", GetBaseTopicName(), "/camera_info");
+          }
         }
 
       virtual uint8_t GetChannels() = 0;

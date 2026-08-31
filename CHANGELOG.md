@@ -1,4 +1,12 @@
 ## Latest Changes
+ * Added `UVehicleAuthoringLibrary` to the CarlaTools editor plugin: editor-only `CallInEditor` UFUNCTIONs (exposed to Python via the PythonScriptPlugin) that assemble and register a drivable 4-wheeled vehicle headlessly — create/retarget the AnimBlueprint, build a dedicated per-mesh PhysicsAsset (auto convex chassis hull + kinematic wheel spheres), configure wheel BPs, duplicate/repoint the vehicle blueprint, and append the vehicle to the shipped VehicleFactory — automating steps 8–19 of the "Add a new vehicle" tutorial without the editor GUI.
+ * Upgraded the bundled eProsima Fast-DDS used by the native ROS 2 integration from v2.11.2 to the v2.14.6 LTS line, moving serialization onto Fast-CDR 2.x while keeping the classic XCDRv1 wire format so published topics stay compatible with every ROS 2 distribution.
+ * Added Zenoh as a third ROS 2 middleware backend, selectable at runtime via `--rmw=zenoh` alongside `--rmw=fastdds` and `--rmw=cyclonedds`.
+ * Added a `--ros-domain-id=<N>` server option to set the ROS2 domain ID at startup. The value (0 to 232) is stored in the middleware abstraction layer and honored by every middleware (FastDDS, CycloneDDS, and Zenoh), so future middlewares pick it up automatically. When the option is omitted, the server falls back to the `ROS_DOMAIN_ID` environment variable, and then to the default domain 0. The resolution order is: `--ros-domain-id`, then `ROS_DOMAIN_ID`, then 0.
+ * Renamed the ROS2 abstraction layer from dds/DDS* to generic middleware/Middleware* naming to support future non-DDS backends like Zenoh. FastDDS and CycloneDDS vendor classes are unchanged.
+ * Added NumPy 2 compatibility to the PythonAPI: replaced removed aliases (`np.bool`, `np.matrix`) in example scripts and upgraded Boost to 1.90.0, which ships the upstream NumPy 2 C ABI fix (boostorg/python#432) so the C extension builds against both NumPy 1.x (>=1.18.4) and NumPy 2.x
+ * Fixed North/South latitude inversion in geo-coordinate conversion for Transverse Mercator and UTM projections
+ * Decoupled ROS2 DDS middleware from a hard FastDDS dependency to an agnostic strategy-pattern abstraction supporting both FastDDS and CycloneDDS, selectable at runtime via `--dds-middleware=` CLI flag
  * Fixed all 282 compiler warnings in LibCarla across 27 files (unused variables, missing braces, narrowing conversions, implicit casts, initializer order, etc.) establishing a zero-warning baseline for server and client release builds
  * Fixed ROS2 native sensors not streaming data when no Python client is listening for UE4, caused by a missing ROS2 enablement check in AreClientsListening() after the multistream refactor (PR #9431)
  * Fix possible RPC Server deadlock on shutdown
@@ -16,6 +24,7 @@
  * Added support for parsing offsets from OpenDRIVE using optional offset transforms.
  * Added ad-rss type-stubs for the PythonAPI when building with RSS support
  * Make TrafficManager PID controller use actual delta times to improve robustness to different fixed_delta_seconds
+ * Fix segfault on LaneCrossingCalculator nullptr access
 
 
 ## CARLA 0.9.16

@@ -150,6 +150,19 @@ class TestTransform(unittest.TestCase):
         self.assertTrue(abs(t.offset_y - 2.0) <= error)
         self.assertTrue(abs(t.offset_z - 3.0) <= error)
         
+    def test_geo_offset_transform_zero(self):
+        error = 0.001
+        t = carla.GeoOffsetTransform(0.0, 0.0, 0.0, 0.0)
+        loc = carla.Location(1.0, 2.0, 3.0)
+
+        out = t.ApplyTransformation(loc)
+
+        solution_list = carla.Location(1.0, 2.0, 3.0)
+
+        self.assertTrue(abs(out.x - solution_list.x) <= error)
+        self.assertTrue(abs(out.y - solution_list.y) <= error)
+        self.assertTrue(abs(out.z - solution_list.z) <= error)
+
     def test_geo_offset_transform_translation(self):
         error = 0.001
         t = carla.GeoOffsetTransform(10.0, 20.0, 5.0, 0.0)
@@ -157,7 +170,7 @@ class TestTransform(unittest.TestCase):
 
         out = t.ApplyTransformation(loc)
 
-        solution_list = carla.Location(11.0, 18.0, 8.0)
+        solution_list = carla.Location(11.0, -18.0, 8.0)
 
         self.assertTrue(abs(out.x - solution_list.x) <= error)
         self.assertTrue(abs(out.y - solution_list.y) <= error)
@@ -268,5 +281,24 @@ class TestTransform(unittest.TestCase):
         self.assertEqual(p.ellps, WGS84)
         self.assertIsNone(p.offset)
 
+    def test_geo_projection_utm_constructor_4_args(self):
+        t = carla.GeoOffsetTransform(1.0, 2.0, 3.0, 0.0)
+        p = carla.GeoProjectionUTM(zone=31, north=True, ellps=WGS84, offset=t)
+
+        self.assertEqual(p.zone, 31)
+        self.assertTrue(p.north)
+        self.assertEqual(p.ellps, WGS84)
+        self.assertIsNotNone(p.offset)
+        self.assertEqual(p.offset, t)
+
+    def test_geo_projection_utm_constructor_4_args_positional(self):
+        t = carla.GeoOffsetTransform(1.0, 2.0, 3.0, 0.0)
+        p = carla.GeoProjectionUTM(31, True, WGS84, t)
+
+        self.assertEqual(p.zone, 31)
+        self.assertTrue(p.north)
+        self.assertEqual(p.ellps, WGS84)
+        self.assertIsNotNone(p.offset)
+        self.assertEqual(p.offset, t)
 
 

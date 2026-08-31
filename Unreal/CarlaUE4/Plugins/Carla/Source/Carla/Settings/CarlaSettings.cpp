@@ -159,6 +159,16 @@ void UCarlaSettings::LoadSettings()
     {
       ROS2 = true;
     }
+    FString RmwValue;
+    if (FParse::Value(FCommandLine::Get(), TEXT("-dds-middleware="), RmwValue))
+    {
+      ROS2MiddlewareName = RmwValue.ToLower();
+    }
+    int32 DomainIdValue;
+    if (FParse::Value(FCommandLine::Get(), TEXT("-ros-domain-id="), DomainIdValue))
+    {
+      ROS2DomainId = DomainIdValue;
+    }
   }
 }
 
