@@ -521,7 +521,7 @@ else
   pushd ${XERCESC_SRC_DIR}/build >/dev/null
 
   cmake -G "Ninja" \
-      -DCMAKE_CXX_FLAGS="-std=c++14 -stdlib=libc++ -fPIC -w" \
+      -DCMAKE_CXX_FLAGS="-std=c++14 -fPIC -w" \
       -DCMAKE_INSTALL_PREFIX="../../${XERCESC_INSTALL_DIR}" \
       -DCMAKE_BUILD_TYPE=Release \
       -DBUILD_SHARED_LIBS=OFF \
