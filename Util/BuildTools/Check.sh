@@ -96,6 +96,9 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+# 优先使用环境中的Python系统，以便构建的wheel文件与Boost库所匹配的Python版本一致。
+export PATH=/usr/bin:/bin:$PATH
+
 if ! { ${LIBCARLA_RELEASE} || ${LIBCARLA_DEBUG} || ${PYTHON_API} || ${SMOKE_TESTS}; }; then
   fatal_error "Nothing selected to be done."
 fi
