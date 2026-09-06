@@ -199,7 +199,8 @@ function build_libcarla {
 
   fi
 
-  ninja
+  # 限制并行任务数量，以避免资源激增.
+  ninja -j$(( $(nproc) / 3 ))
 
   ninja install | grep -v "Up-to-date:"
 
